@@ -1,0 +1,2241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>REDDROP — Blood Donor & Receiver Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#C0392B;--red-light:#FADBD8;--red-dark:#922B21;--red-glow:rgba(192,57,43,0.15);
+  --bg:#0D0D0D;--surface:#161616;--surface2:#1E1E1E;--surface3:#252525;--surface4:#2C2C2C;
+  --border:#2A2A2A;--border2:#333;--border3:#3D3D3D;
+  --text:#F0EDE8;--text2:#A09D99;--text3:#6B6865;--text4:#4A4845;
+  --green:#27AE60;--green-bg:#1a3a2a;--green-text:#52c47a;
+  --amber:#E67E22;--amber-bg:#3a2a10;--amber-text:#f0a500;
+  --blue:#2980B9;--blue-bg:#102030;--blue-text:#5b9dce;
+  --radius:12px;--radius-sm:8px;--radius-lg:16px;--radius-xl:20px;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);--shadow-lg:0 8px 40px rgba(0,0,0,0.6);
+  --transition:all 0.18s cubic-bezier(0.4,0,0.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.serif{font-family:'DM Serif Display',serif}
+button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;outline:none}
+input,select,textarea{font-family:'DM Sans',sans-serif}
+a{color:inherit;text-decoration:none}
+
+/* ═══════════════════ NAV ═══════════════════ */
+.nav{background:rgba(22,22,22,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:62px;
+  position:sticky;top:0;z-index:100}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer}
+.logo-drop{width:34px;height:34px;background:linear-gradient(135deg,var(--red),var(--red-dark));
+  border-radius:50% 50% 50% 10%;display:flex;align-items:center;justify-content:center;font-size:17px;
+  box-shadow:0 0 16px var(--red-glow)}
+.nav-title{font-size:20px;font-weight:600;letter-spacing:-0.5px}
+.nav-title span{color:var(--red)}
+.nav-actions{display:flex;align-items:center;gap:8px}
+
+/* ═══════════════════ BUTTONS ═══════════════════ */
+.btn{padding:8px 18px;border-radius:var(--radius-sm);font-size:14px;font-weight:500;transition:var(--transition);display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--red);color:#fff;box-shadow:0 2px 8px rgba(192,57,43,0.3)}
+.btn-primary:hover{background:var(--red-dark);box-shadow:0 4px 16px rgba(192,57,43,0.4);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{border-color:var(--border3);color:var(--text);background:var(--surface2)}
+.btn-success{background:var(--green-bg);color:var(--green-text);border:1px solid var(--green)}
+.btn-success:hover{background:#1f4a32}
+.btn-danger{background:#3a1414;color:#e57373;border:1px solid #922B21}
+.btn-danger:hover{background:#451818}
+.btn-sm{padding:5px 12px;font-size:13px}
+.btn-full{width:100%;justify-content:center}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none!important}
+.btn-icon{width:34px;height:34px;padding:0;justify-content:center;border-radius:var(--radius-sm)}
+
+/* ═══════════════════ LAYOUT ═══════════════════ */
+.page{max-width:1240px;margin:0 auto;padding:2rem}
+.two-col{display:grid;grid-template-columns:260px 1fr;gap:2rem;align-items:start}
+.sidebar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:1.5rem;position:sticky;top:80px}
+
+/* ═══════════════════ SIDEBAR ═══════════════════ */
+.sidebar-user{display:flex;align-items:center;gap:12px;padding-bottom:1.25rem;margin-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0}
+.av-42{width:42px;height:42px;font-size:16px}
+.av-36{width:36px;height:36px;font-size:13px}
+.av-72{width:72px;height:72px;font-size:26px}
+.avatar-red{background:linear-gradient(135deg,var(--red-light),#f9b8b3);color:var(--red-dark)}
+.avatar-blue{background:linear-gradient(135deg,#d6eaf8,#aed6f1);color:#1a5276}
+.avatar-gold{background:linear-gradient(135deg,#fef9e7,#fdebd0);color:#7d6608}
+.sidebar-name{font-weight:500;font-size:14px}
+.sidebar-role{font-size:12px;color:var(--text3)}
+.sidebar-nav{display:flex;flex-direction:column;gap:2px}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);
+  cursor:pointer;font-size:14px;color:var(--text2);transition:var(--transition)}
+.sidebar-item:hover{background:var(--surface2);color:var(--text)}
+.sidebar-item.active{background:var(--surface3);color:var(--red);font-weight:500}
+.sidebar-icon{font-size:17px;width:20px;text-align:center}
+.sidebar-badge{margin-left:auto;background:var(--red);color:#fff;border-radius:20px;font-size:11px;padding:1px 7px;font-weight:600}
+
+/* ═══════════════════ CARDS ═══════════════════ */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem}
+.card-sm{padding:1rem 1.25rem}
+.card+.card{margin-top:1rem}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.card-title{font-size:17px;font-weight:500}
+.card-subtitle{font-size:13px;color:var(--text3);margin-top:2px}
+
+/* ═══════════════════ STATS ═══════════════════ */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.5rem}
+.stat-card{background:var(--surface2);border-radius:var(--radius);padding:1rem 1.25rem;border:1px solid var(--border)}
+.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:8px;font-weight:500}
+.stat-value{font-size:28px;font-weight:700;line-height:1}
+.stat-red{color:var(--red)}.stat-green{color:var(--green)}.stat-blue{color:var(--blue)}.stat-amber{color:var(--amber)}
+
+/* ═══════════════════ FORMS ═══════════════════ */
+.form-group{margin-bottom:1rem}
+label{display:block;font-size:13px;color:var(--text2);margin-bottom:6px;font-weight:500}
+input,select,textarea{width:100%;padding:10px 13px;background:var(--surface2);border:1px solid var(--border2);
+  border-radius:var(--radius-sm);color:var(--text);font-size:14px;transition:var(--transition)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px var(--red-glow)}
+select option{background:var(--surface2)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-error{font-size:12px;color:#e57373;margin-top:4px}
+
+/* ═══════════════════ BADGES ═══════════════════ */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500;gap:4px}
+.badge-red{background:#3a1414;color:#e57373}
+.badge-green{background:var(--green-bg);color:var(--green-text)}
+.badge-amber{background:var(--amber-bg);color:var(--amber-text)}
+.badge-blue{background:var(--blue-bg);color:var(--blue-text)}
+.badge-gray{background:var(--surface3);color:var(--text3)}
+.badge-purple{background:#1e1030;color:#a78bfa}
+
+/* ═══════════════════ TABLE ═══════════════════ */
+.table{width:100%;border-collapse:collapse;font-size:14px}
+.table th{text-align:left;padding:10px 12px;color:var(--text3);font-weight:500;border-bottom:1px solid var(--border);font-size:12px;text-transform:uppercase;letter-spacing:0.4px}
+.table td{padding:12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.table tr:last-child td{border-bottom:none}
+.table tr:hover td{background:var(--surface2)}
+
+/* ═══════════════════ BLOOD BADGE ═══════════════════ */
+.blood-badge{border-radius:50%;background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.bb-36{width:36px;height:36px;font-size:12px}
+.bb-42{width:42px;height:42px;font-size:14px}
+.bb-52{width:52px;height:52px;font-size:18px}
+
+/* ═══════════════════ DONOR CARD ═══════════════════ */
+.donor-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:1.25rem;display:flex;align-items:center;gap:1rem;transition:var(--transition)}
+.donor-card:hover{border-color:var(--border3);box-shadow:var(--shadow)}
+.donor-info{flex:1;min-width:0}
+.donor-name{font-weight:500;font-size:15px}
+.donor-meta{font-size:13px;color:var(--text3);margin-top:3px}
+
+/* ═══════════════════ NOTIFICATIONS ═══════════════════ */
+.notif-item{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:var(--transition)}
+.notif-item:last-child{border-bottom:none}
+.notif-item:hover{opacity:0.85}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--red);margin-top:7px;flex-shrink:0}
+.notif-dot.read{background:var(--text4)}
+.notif-content{flex:1}
+.notif-text{font-size:14px;line-height:1.5}
+.notif-time{font-size:12px;color:var(--text3);margin-top:3px}
+
+/* ═══════════════════ HERO ═══════════════════ */
+.hero{padding:5rem 2rem 4rem;text-align:center;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(192,57,43,0.12) 0%,transparent 70%);pointer-events:none}
+.hero-title{font-size:clamp(2.5rem,6vw,4.5rem);line-height:1.05;margin-bottom:1.5rem}
+.hero-drop{color:var(--red);display:inline-block}
+.hero-sub{font-size:18px;color:var(--text2);max-width:560px;margin:0 auto 2.5rem}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.hero-stats{display:flex;gap:3rem;justify-content:center;margin-top:4rem;flex-wrap:wrap}
+.hero-stat-num{font-size:2.5rem;font-weight:700;color:var(--red)}
+.hero-stat-lbl{font-size:13px;color:var(--text3);margin-top:4px}
+
+/* ═══════════════════ MODAL ═══════════════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;
+  justify-content:center;z-index:200;padding:1rem;backdrop-filter:blur(4px);animation:fadeIn 0.15s ease}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-xl);
+  padding:2rem;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;position:relative;
+  box-shadow:var(--shadow-lg);animation:slideUp 0.2s cubic-bezier(0.34,1.56,0.64,1)}
+.modal-close{position:absolute;top:1rem;right:1rem;background:var(--surface2);border:1px solid var(--border);
+  color:var(--text3);cursor:pointer;font-size:16px;width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;transition:var(--transition)}
+.modal-close:hover{color:var(--text);background:var(--surface3)}
+.modal-title{font-size:22px;font-weight:600;margin-bottom:0.25rem}
+.modal-sub{font-size:14px;color:var(--text3);margin-bottom:1.5rem}
+
+/* ═══════════════════ PROGRESS ═══════════════════ */
+.progress-bar{background:var(--surface3);border-radius:4px;height:6px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--red-dark));border-radius:4px;transition:width 0.5s ease}
+
+/* ═══════════════════ AVAILABILITY ═══════════════════ */
+.avail-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.avail-yes{background:var(--green);box-shadow:0 0 6px rgba(39,174,96,0.5)}
+.avail-no{background:var(--text4)}
+
+/* ═══════════════════ SEARCH BAR ═══════════════════ */
+.search-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1.5rem}
+.search-bar input,.search-bar select{flex:1;min-width:140px}
+
+/* ═══════════════════ TOAST ═══════════════════ */
+#toast{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);
+  padding:12px 16px;font-size:14px;max-width:340px;pointer-events:all;box-shadow:var(--shadow);
+  animation:slideIn 0.2s ease;display:flex;align-items:center;gap:10px}
+.toast.success{border-left:3px solid var(--green)}
+.toast.error{border-left:3px solid var(--red)}
+.toast.info{border-left:3px solid var(--blue)}
+.toast.warn{border-left:3px solid var(--amber)}
+
+/* ═══════════════════ CHARTS ═══════════════════ */
+.chart-bar-wrap{display:flex;align-items:flex-end;gap:8px;height:120px;margin-top:1rem;padding:0 4px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.bar{background:linear-gradient(180deg,var(--red),var(--red-dark));border-radius:3px 3px 0 0;width:100%;
+  transition:height 0.5s cubic-bezier(0.34,1.56,0.64,1);min-height:4px}
+.bar-label{font-size:11px;color:var(--text3)}
+.bar-val{font-size:10px;color:var(--text2);font-weight:600}
+
+/* ═══════════════════ COMPAT TABLE ═══════════════════ */
+.compat{font-size:12px;border-collapse:collapse}
+.compat td,.compat th{padding:6px 8px;text-align:center;border:1px solid var(--border)}
+.compat-yes{background:#1a3a2a;color:#52c47a;font-weight:600}
+.compat-no{background:var(--surface3);color:var(--text4)}
+
+/* ═══════════════════ EMPTY STATE ═══════════════════ */
+.empty{text-align:center;padding:3rem 1rem;color:var(--text3)}
+.empty-icon{font-size:3rem;margin-bottom:1rem;opacity:0.7}
+.empty p{font-size:14px}
+
+/* ═══════════════════ MISC ═══════════════════ */
+.divider{border:none;border-top:1px solid var(--border);margin:1.25rem 0}
+.text-sm{font-size:13px}.text-xs{font-size:12px}.text-muted{color:var(--text3)}
+.text-red{color:var(--red)}.text-green{color:var(--green)}.text-amber{color:var(--amber)}
+.bold{font-weight:600}.mt-sm{margin-top:8px}.mt-md{margin-top:1rem}.mt-lg{margin-top:1.5rem}
+.ml-auto{margin-left:auto}.flex{display:flex}.flex-center{display:flex;align-items:center}
+.gap-sm{gap:8px}.gap-md{gap:12px}.gap-lg{gap:1rem}.w-full{width:100%}
+.urgency-high{color:#e57373}.urgency-medium{color:var(--amber-text)}.urgency-low{color:var(--green-text)}
+.info-box{background:var(--surface2);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--text3)}
+.warning-box{background:#1a1000;border:1px solid #5a3000;border-radius:var(--radius-sm);padding:12px 16px}
+.success-box{background:#0a1f12;border:1px solid #1e5c35;border-radius:var(--radius-sm);padding:12px 16px}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-bottom:4rem}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);
+  padding:2rem;text-align:center;transition:var(--transition)}
+.feature-card:hover{border-color:var(--red-dark);box-shadow:0 0 30px var(--red-glow)}
+
+/* ═══════════════════ LOADER ═══════════════════ */
+#loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;z-index:9999;gap:1rem}
+.loader-spin{width:40px;height:40px;border:3px solid var(--surface3);border-top-color:var(--red);
+  border-radius:50%;animation:spin 0.7s linear infinite}
+.db-status{font-size:12px;color:var(--text3);margin-top:0.5rem}
+
+/* ═══════════════════ AUDIT LOG ═══════════════════ */
+.audit-row{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;align-items:flex-start}
+.audit-row:last-child{border-bottom:none}
+.audit-badge{flex-shrink:0;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;font-family:monospace}
+
+/* ═══════════════════ ANIMATIONS ═══════════════════ */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+@keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:none;opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+
+/* ═══════════════════ RESPONSIVE ═══════════════════ */
+@media(max-width:768px){
+  .two-col{grid-template-columns:1fr}
+  .sidebar{position:static}
+  .form-row{grid-template-columns:1fr}
+  .hero-stats{gap:2rem}
+  .nav{padding:0 1rem}
+  .page{padding:1rem}
+  .features-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="logo-drop" style="width:52px;height:52px;font-size:26px;margin-bottom:0.5rem">🩸</div>
+  <div style="font-size:22px;font-weight:600">Red<span style="color:var(--red)">Drop</span></div>
+  <div class="loader-spin"></div>
+  <div class="db-status" id="db-status">Initialising database...</div>
+</div>
+
+<div id="toast"></div>
+<div id="app" style="display:none"></div>
+
+<script>
+'use strict';
+
+/* ════════════════════════════════════════════════
+   ██████╗  █████╗ ████████╗ █████╗ ██████╗  █████╗ ███████╗███████╗
+   ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝
+   ██║  ██║███████║   ██║   ███████║██████╔╝███████║███████╗█████╗  
+   ██║  ██║██╔══██║   ██║   ██╔══██║██╔══██╗██╔══██║╚════██║██╔══╝  
+   ██████╔╝██║  ██║   ██║   ██║  ██║██████╔╝██║  ██║███████║███████╗
+   ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝
+   IndexedDB — Persistent browser database, survives page refresh
+   ════════════════════════════════════════════════ */
+
+const DB_NAME = 'reddrop_db';
+const DB_VERSION = 1;
+let db = null;
+
+const STORES = {
+  users:     { keyPath: 'id', indexes: [['email','email',{unique:true}],['role','role'],['bloodGroup','bloodGroup'],['city','city'],['verified','verified']] },
+  requests:  { keyPath: 'id', indexes: [['receiverId','receiverId'],['bloodGroup','bloodGroup'],['status','status'],['city','city'],['createdAt','createdAt']] },
+  donations: { keyPath: 'id', indexes: [['donorId','donorId'],['requestId','requestId'],['createdAt','createdAt']] },
+  notifications: { keyPath: 'id', indexes: [['userId','userId'],['read','read'],['createdAt','createdAt']] },
+  audit_log: { keyPath: 'id', indexes: [['performedBy','performedBy'],['action','action'],['createdAt','createdAt']] },
+  sessions:  { keyPath: 'token' },
+};
+
+function initDB() {
+  return new Promise((resolve, reject) => {
+    setDbStatus('Opening IndexedDB...');
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e) => {
+      setDbStatus('Creating tables...');
+      const database = e.target.result;
+      Object.entries(STORES).forEach(([name, config]) => {
+        if (!database.objectStoreNames.contains(name)) {
+          const store = database.createObjectStore(name, { keyPath: config.keyPath });
+          (config.indexes || []).forEach(([idxName, keyPath, opts]) => {
+            store.createIndex(idxName, keyPath, opts || {});
+          });
+        }
+      });
+    };
+    req.onsuccess = (e) => { db = e.target.result; resolve(db); };
+    req.onerror = () => reject(req.error);
+  });
+}
+
+/* ─── Generic DB operations ─── */
+function dbGet(store, key) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).get(key);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+function dbGetAll(store) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+function dbGetByIndex(store, indexName, value) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).index(indexName).getAll(value);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+function dbPut(store, record) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).put(record);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+function dbDelete(store, key) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).delete(key);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+function dbCount(store) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).count();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+/* ════════════════════════════════════════════════
+   CRYPTO / SECURITY LAYER
+   ════════════════════════════════════════════════ */
+
+/* SHA-256 password hashing using Web Crypto API */
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const salt = 'REDDROP_SALT_v1_'; // static salt for demo; production uses bcrypt
+  const data = encoder.encode(salt + password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function verifyPassword(password, hash) {
+  return (await hashPassword(password)) === hash;
+}
+
+/* JWT-like token generation */
+function generateToken() {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return Array.from(array, b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function uid() {
+  const array = new Uint8Array(12);
+  crypto.getRandomValues(array);
+  return Array.from(array, b => b.toString(16).padStart(2,'0')).join('');
+}
+
+/* Input validation */
+const Validator = {
+  email: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+  password: (v) => v && v.length >= 6,
+  required: (v) => v && v.toString().trim().length > 0,
+  phone: (v) => !v || /^[\d\+\-\s\(\)]{7,15}$/.test(v),
+};
+
+/* ════════════════════════════════════════════════
+   BACKEND SERVICE LAYER — Auth
+   Mirrors P07: JWT auth, RBAC, security hardening
+   ════════════════════════════════════════════════ */
+
+const TOKEN_EXPIRY_MS = 15 * 60 * 1000; // 15 min access token
+const REFRESH_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days refresh
+
+const AuthService = {
+  /* Register new user */
+  async register(data) {
+    const { name, email, password, role, phone, city, bloodGroup } = data;
+    // Validate
+    if (!Validator.required(name)) return { error: 'Name is required' };
+    if (!Validator.email(email)) return { error: 'Invalid email address' };
+    if (!Validator.password(password)) return { error: 'Password must be at least 6 characters' };
+    if (!['donor','receiver'].includes(role)) return { error: 'Invalid role' };
+    if (role === 'donor' && !bloodGroup) return { error: 'Blood group is required for donors' };
+    if (!Validator.phone(phone)) return { error: 'Invalid phone number' };
+    // Check duplicate
+    const existing = await dbGetByIndex('users', 'email', email);
+    if (existing.length > 0) return { error: 'Email already registered' };
+    // Hash password
+    const passwordHash = await hashPassword(password);
+    const now = new Date().toISOString();
+    const user = {
+      id: uid(), name: name.trim(), email: email.toLowerCase().trim(),
+      passwordHash, role, phone: phone || '', city: city || '',
+      bloodGroup: role === 'donor' ? bloodGroup : null,
+      availability: role === 'donor' ? true : null,
+      lastDonationDate: null, donationCount: 0,
+      verified: false, isActive: true,
+      profileImg: '', joinDate: now, createdAt: now, updatedAt: now,
+    };
+    await dbPut('users', user);
+    // Create welcome notification
+    await NotificationService.create(user.id,
+      role === 'donor'
+        ? '🎉 Welcome to REDDROP! Your account is pending admin verification. You\'ll be notified once approved.'
+        : '🎉 Welcome to REDDROP! You can now submit blood requests.',
+      'welcome');
+    await AuditService.log('REGISTER', user.id, user.id, `New ${role} registered: ${email}`);
+    return { success: true, user: AuthService.sanitize(user) };
+  },
+
+  /* Login */
+  async login(email, password) {
+    if (!email || !password) return { error: 'Email and password required' };
+    const users = await dbGetByIndex('users', 'email', email.toLowerCase().trim());
+    // Admin hardcoded check
+    if (email === 'admin@reddrop.com' && password === 'admin123') {
+      // ensure admin exists
+      let admin = users.find(u => u.role === 'admin');
+      if (!admin) {
+        const now = new Date().toISOString();
+        admin = { id: 'admin_001', name: 'Administrator', email: 'admin@reddrop.com',
+          passwordHash: await hashPassword('admin123'), role: 'admin', phone: '', city: '',
+          bloodGroup: null, availability: null, lastDonationDate: null, donationCount: 0,
+          verified: true, isActive: true, profileImg: '', joinDate: now, createdAt: now, updatedAt: now };
+        await dbPut('users', admin);
+      }
+      const token = await AuthService.createSession(admin.id);
+      await AuditService.log('LOGIN', admin.id, admin.id, 'Admin login');
+      return { success: true, token, user: AuthService.sanitize(admin) };
+    }
+    const user = users.find(u => u.role !== 'admin');
+    if (!user) return { error: 'Invalid email or password' };
+    if (!user.isActive) return { error: 'Account has been deactivated. Contact admin.' };
+    const valid = await verifyPassword(password, user.passwordHash);
+    if (!valid) return { error: 'Invalid email or password' };
+    const token = await AuthService.createSession(user.id);
+    // Update last login
+    await dbPut('users', { ...user, lastLogin: new Date().toISOString() });
+    await AuditService.log('LOGIN', user.id, user.id, `${user.role} login: ${email}`);
+    return { success: true, token, user: AuthService.sanitize(user) };
+  },
+
+  async createSession(userId) {
+    const token = generateToken();
+    const now = Date.now();
+    await dbPut('sessions', { token, userId, createdAt: now, expiresAt: now + REFRESH_EXPIRY_MS });
+    sessionStorage.setItem('rd_token', token);
+    return token;
+  },
+
+  async logout(token) {
+    if (token) await dbDelete('sessions', token);
+    sessionStorage.removeItem('rd_token');
+  },
+
+  async getCurrentUser() {
+    const token = sessionStorage.getItem('rd_token');
+    if (!token) return null;
+    const session = await dbGet('sessions', token);
+    if (!session) return null;
+    if (Date.now() > session.expiresAt) {
+      await dbDelete('sessions', token);
+      sessionStorage.removeItem('rd_token');
+      return null;
+    }
+    const user = await dbGet('users', session.userId);
+    return user && user.isActive ? AuthService.sanitize(user) : null;
+  },
+
+  sanitize(user) {
+    const { passwordHash, ...safe } = user;
+    return safe;
+  },
+
+  /* RBAC middleware */
+  requireRole(...roles) {
+    return (user) => {
+      if (!user) return { error: 'Authentication required', code: 401 };
+      if (!roles.includes(user.role)) return { error: 'Access denied', code: 403 };
+      return null;
+    };
+  },
+};
+
+/* ════════════════════════════════════════════════
+   BACKEND SERVICE LAYER — Users / Donors
+   Mirrors P08: donor profiles, blood group, search, availability
+   ════════════════════════════════════════════════ */
+
+const BLOOD_COMPAT = {
+  'O-': ['O-','O+','A-','A+','B-','B+','AB-','AB+'],
+  'O+': ['O+','A+','B+','AB+'],
+  'A-': ['A-','A+','AB-','AB+'],
+  'A+': ['A+','AB+'],
+  'B-': ['B-','B+','AB-','AB+'],
+  'B+': ['B+','AB+'],
+  'AB-': ['AB-','AB+'],
+  'AB+': ['AB+'],
+};
+const BLOOD_TYPES = ['O-','O+','A-','A+','B-','B+','AB-','AB+'];
+const CITIES = ['Dhaka','Chittagong','Sylhet','Rajshahi','Khulna','Mymensingh','Barisal','Comilla'];
+
+function daysSince(dateStr) {
+  if (!dateStr) return 9999;
+  return Math.floor((Date.now() - new Date(dateStr)) / (1000 * 60 * 60 * 24));
+}
+
+function canDonate(donor) {
+  return donor.availability === true && daysSince(donor.lastDonationDate) >= 90;
+}
+
+function getCompatibleDonorBloodGroups(requestedBlood) {
+  // Who can donate to someone needing `requestedBlood`?
+  return Object.keys(BLOOD_COMPAT).filter(bg => BLOOD_COMPAT[bg].includes(requestedBlood));
+}
+
+const UserService = {
+  async getDonors(filters = {}) {
+    const all = await dbGetAll('users');
+    let donors = all.filter(u => u.role === 'donor' && u.isActive);
+    if (filters.verified !== undefined) donors = donors.filter(u => u.verified === filters.verified);
+    if (filters.bloodGroup) donors = donors.filter(u => u.bloodGroup === filters.bloodGroup);
+    if (filters.city) donors = donors.filter(u => u.city === filters.city);
+    if (filters.available) donors = donors.filter(u => canDonate(u));
+    if (filters.name) donors = donors.filter(u => u.name.toLowerCase().includes(filters.name.toLowerCase()));
+    return donors.map(AuthService.sanitize);
+  },
+
+  async getMatchingDonors(requestedBlood, city) {
+    const compatible = getCompatibleDonorBloodGroups(requestedBlood);
+    const all = await dbGetAll('users');
+    return all.filter(u =>
+      u.role === 'donor' && u.isActive && u.verified &&
+      compatible.includes(u.bloodGroup) &&
+      canDonate(u) &&
+      (!city || u.city === city)
+    ).map(AuthService.sanitize);
+  },
+
+  async updateProfile(userId, data, currentUser) {
+    const deny = AuthService.requireRole('donor','receiver','admin')(currentUser);
+    if (deny) return deny;
+    if (currentUser.id !== userId && currentUser.role !== 'admin') return { error: 'Access denied', code: 403 };
+    const user = await dbGet('users', userId);
+    if (!user) return { error: 'User not found', code: 404 };
+    const allowed = ['name','phone','city','bloodGroup','availability','profileImg'];
+    const updates = {};
+    allowed.forEach(k => { if (data[k] !== undefined) updates[k] = data[k]; });
+    updates.updatedAt = new Date().toISOString();
+    const updated = { ...user, ...updates };
+    await dbPut('users', updated);
+    await AuditService.log('UPDATE_PROFILE', currentUser.id, userId, `Profile updated`);
+    return { success: true, user: AuthService.sanitize(updated) };
+  },
+
+  async toggleAvailability(userId, currentUser) {
+    const deny = AuthService.requireRole('donor')(currentUser);
+    if (deny) return deny;
+    if (currentUser.id !== userId) return { error: 'Access denied', code: 403 };
+    const user = await dbGet('users', userId);
+    if (!user) return { error: 'User not found', code: 404 };
+    if (!user.verified) return { error: 'Account must be verified first' };
+    if (!canDonate(user) && !user.availability) {
+      return { error: `You are in the 90-day restriction period. ${Math.max(0, 90 - daysSince(user.lastDonationDate))} days remaining.` };
+    }
+    const updated = { ...user, availability: !user.availability, updatedAt: new Date().toISOString() };
+    await dbPut('users', updated);
+    return { success: true, availability: updated.availability, user: AuthService.sanitize(updated) };
+  },
+
+  async getAllUsers(currentUser) {
+    const deny = AuthService.requireRole('admin')(currentUser);
+    if (deny) return deny;
+    const all = await dbGetAll('users');
+    return { success: true, users: all.map(AuthService.sanitize) };
+  },
+
+  async verifyUser(targetId, currentUser) {
+    const deny = AuthService.requireRole('admin')(currentUser);
+    if (deny) return deny;
+    const user = await dbGet('users', targetId);
+    if (!user) return { error: 'User not found', code: 404 };
+    const updated = { ...user, verified: true, updatedAt: new Date().toISOString() };
+    await dbPut('users', updated);
+    await NotificationService.create(targetId, '✅ Your account has been verified by admin! You are now eligible to donate.', 'verification');
+    await AuditService.log('VERIFY_USER', currentUser.id, targetId, `User verified: ${user.email}`);
+    return { success: true, user: AuthService.sanitize(updated) };
+  },
+
+  async deactivateUser(targetId, currentUser) {
+    const deny = AuthService.requireRole('admin')(currentUser);
+    if (deny) return deny;
+    if (targetId === currentUser.id) return { error: 'Cannot deactivate your own account' };
+    const user = await dbGet('users', targetId);
+    if (!user) return { error: 'User not found', code: 404 };
+    const updated = { ...user, isActive: false, updatedAt: new Date().toISOString() };
+    await dbPut('users', updated);
+    await AuditService.log('DEACTIVATE_USER', currentUser.id, targetId, `User deactivated: ${user.email}`);
+    return { success: true };
+  },
+
+  async activateUser(targetId, currentUser) {
+    const deny = AuthService.requireRole('admin')(currentUser);
+    if (deny) return deny;
+    const user = await dbGet('users', targetId);
+    if (!user) return { error: 'User not found', code: 404 };
+    const updated = { ...user, isActive: true, updatedAt: new Date().toISOString() };
+    await dbPut('users', updated);
+    await AuditService.log('ACTIVATE_USER', currentUser.id, targetId, `User activated: ${user.email}`);
+    return { success: true };
+  },
+
+  async deleteUser(targetId, currentUser) {
+    const deny = AuthService.requireRole('admin')(currentUser);
+    if (deny) return deny;
+    if (targetId === currentUser.id) return { error: 'Cannot delete your own account' };
+    await dbDelete('users', targetId);
+    await AuditService.log('DELETE_USER', currentUser.id, targetId, 'User deleted');
+    return { success: true };
+  },
+};
+
+/* ════════════════════════════════════════════════
+   BACKEND SERVICE LAYER — Blood Requests
+   Mirrors P09: request lifecycle, state machine, matching
+   ════════════════════════════════════════════════ */
+
+// Valid state transitions (state machine)
+const REQUEST_TRANSITIONS = {
+  pending:   ['accepted','cancelled','expired'],
+  accepted:  ['completed','cancelled'],
+  completed: [], // terminal
+  cancelled: [], // terminal
+  expired:   [], // terminal
+};
+
+const RequestService = {
+  async create(data, currentUser) {
+    const deny = AuthService.requireRole('receiver')(currentUser);
+    if (deny) return deny;
+    const { bloodGroup, city, hospital, urgency, notes, unitsNeeded } = data;
+    if (!BLOOD_TYPES.includes(bloodGroup)) return { error: 'Invalid blood group' };
+    if (!hospital || !hospital.trim()) return { error: 'Hospital name is required' };
+    if (!['high','medium','low'].includes(urgency)) return { error: 'Invalid urgency level' };
+    const now = new Date().toISOString();
+    const request = {
+      id: uid(), receiverId: currentUser.id, receiverName: currentUser.name,
+      bloodGroup, city: city || '', hospital: hospital.trim(),
+      urgency, notes: notes || '', unitsNeeded: unitsNeeded || 1,
+      status: 'pending', acceptedBy: null, acceptedByName: null,
+      donorContact: null, createdAt: now, updatedAt: now,
+    };
+    await dbPut('requests', request);
+    // Match and notify donors
+    const matched = await UserService.getMatchingDonors(bloodGroup, city);
+    for (const donor of matched) {
+      await NotificationService.create(donor.id,
+        `🚨 ${urgency === 'high' ? 'URGENT: ' : ''}${bloodGroup} blood needed at ${hospital}${city ? ', ' + city : ''}. You are a compatible donor!`,
+        'blood_request', request.id);
+    }
+    // Notify receiver
+    await NotificationService.create(currentUser.id,
+      `Your request for ${bloodGroup} blood at ${hospital} has been submitted. ${matched.length} compatible donor(s) notified.`,
+      'request_created', request.id);
+    await AuditService.log('CREATE_REQUEST', currentUser.id, request.id, `Blood request: ${bloodGroup} at ${hospital}`);
+    return { success: true, request, matchedDonors: matched.length };
+  },
+
+  async getAll(filters = {}) {
+    let all = await dbGetAll('requests');
+    if (filters.status) all = all.filter(r => r.status === filters.status);
+    if (filters.bloodGroup) all = all.filter(r => r.bloodGroup === filters.bloodGroup);
+    if (filters.city) all = all.filter(r => r.city === filters.city);
+    if (filters.receiverId) all = all.filter(r => r.receiverId === filters.receiverId);
+    // Sort: high urgency first, then by createdAt desc
+    const urgencyRank = { high: 0, medium: 1, low: 2 };
+    all.sort((a, b) => {
+      const ur = (urgencyRank[a.urgency] ?? 1) - (urgencyRank[b.urgency] ?? 1);
+      if (ur !== 0) return ur;
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+    return all;
+  },
+
+  async getById(id) {
+    return dbGet('requests', id);
+  },
+
+  async updateStatus(requestId, newStatus, currentUser, extra = {}) {
+    const request = await dbGet('requests', requestId);
+    if (!request) return { error: 'Request not found', code: 404 };
+    // RBAC: receivers and admins can cancel; donors can accept; receivers/admins can complete
+    const allowed = REQUEST_TRANSITIONS[request.status] || [];
+    if (!allowed.includes(newStatus)) return { error: `Cannot transition from ${request.status} to ${newStatus}` };
+    // Role checks per transition
+    if (newStatus === 'accepted') {
+      const deny = AuthService.requireRole('donor')(currentUser);
+      if (deny) return deny;
+      if (!currentUser.verified) return { error: 'Your account must be verified to accept requests' };
+      if (!canDonate(currentUser)) return { error: 'You are not eligible to donate right now' };
+    }
+    if (newStatus === 'cancelled') {
+      if (currentUser.role !== 'admin' && currentUser.id !== request.receiverId) {
+        const deny = AuthService.requireRole('receiver')(currentUser);
+        if (deny) return deny;
+      }
+    }
+    if (newStatus === 'completed') {
+      if (currentUser.role !== 'admin' && currentUser.id !== request.receiverId) {
+        return { error: 'Only the receiver or admin can mark as completed' };
+      }
+    }
+    const now = new Date().toISOString();
+    const updated = {
+      ...request,
+      status: newStatus,
+      updatedAt: now,
+      ...(newStatus === 'accepted' ? { acceptedBy: currentUser.id, acceptedByName: currentUser.name, acceptedAt: now } : {}),
+      ...extra,
+    };
+    await dbPut('requests', updated);
+    // Notifications
+    if (newStatus === 'accepted') {
+      await NotificationService.create(request.receiverId,
+        `✅ ${currentUser.name} has accepted your ${request.bloodGroup} blood request at ${request.hospital}!`,
+        'request_accepted', requestId);
+      // Record donation when accepted
+      await DonationService.record({ donorId: currentUser.id, requestId, bloodGroup: currentUser.bloodGroup,
+        city: request.city, hospital: request.hospital, receiverName: request.receiverName }, currentUser);
+    }
+    if (newStatus === 'completed') {
+      await NotificationService.create(request.acceptedBy || '',
+        `🙏 Your donation for the ${request.bloodGroup} request at ${request.hospital} has been marked complete.`,
+        'donation_complete', requestId);
+    }
+    if (newStatus === 'expired') {
+      await NotificationService.create(request.receiverId,
+        `⏰ Your ${request.bloodGroup} blood request at ${request.hospital} has expired (72 hours). Please submit a new request if still needed.`,
+        'request_expired', requestId);
+    }
+    await AuditService.log('UPDATE_REQUEST_STATUS', currentUser.id, requestId,
+      `Request status: ${request.status} → ${newStatus}`);
+    return { success: true, request: updated };
+  },
+
+  /* Auto-expiry: runs on app load — expire requests older than 72 hours */
+  async runExpiryJob() {
+    const all = await dbGetAll('requests');
+    const cutoff = Date.now() - (72 * 60 * 60 * 1000);
+    let expired = 0;
+    for (const r of all) {
+      if (r.status === 'pending' && new Date(r.createdAt).getTime() < cutoff) {
+        await RequestService.updateStatus(r.id, 'expired', { id: 'system', role: 'admin', name: 'System' });
+        expired++;
+      }
+    }
+    if (expired > 0) console.log(`[ExpiryJob] Expired ${expired} requests`);
+    return expired;
+  },
+
+  async deleteRequest(requestId, currentUser) {
+    const deny = AuthService.requireRole('admin')(currentUser);
+    if (deny) return deny;
+    await dbDelete('requests', requestId);
+    await AuditService.log('DELETE_REQUEST', currentUser.id, requestId, 'Request deleted by admin');
+    return { success: true };
+  },
+};
+
+/* ════════════════════════════════════════════════
+   BACKEND SERVICE LAYER — Donations
+   Mirrors P08/P09: donation recording, 90-day restriction
+   ════════════════════════════════════════════════ */
+
+const DonationService = {
+  async record(data, currentUser) {
+    const { donorId, requestId, bloodGroup, city, hospital, receiverName, date } = data;
+    const donorUser = await dbGet('users', donorId || currentUser.id);
+    if (!donorUser) return { error: 'Donor not found', code: 404 };
+    // Enforce 90-day rule
+    if (daysSince(donorUser.lastDonationDate) < 90 && donorUser.lastDonationDate) {
+      return { error: `90-day restriction active. ${Math.max(0, 90 - daysSince(donorUser.lastDonationDate))} days remaining.` };
+    }
+    const now = new Date().toISOString();
+    const donationDate = date || now.split('T')[0];
+    const donation = {
+      id: uid(), donorId: donorUser.id, requestId: requestId || null,
+      bloodGroup: bloodGroup || donorUser.bloodGroup,
+      city: city || donorUser.city, hospital: hospital || '',
+      receiverName: receiverName || 'Anonymous',
+      date: donationDate, status: 'completed', createdAt: now,
+    };
+    await dbPut('donations', donation);
+    // Update donor: set last donation date, increment count, set availability false, enforce restriction
+    const updatedDonor = {
+      ...donorUser,
+      lastDonationDate: donationDate,
+      donationCount: (donorUser.donationCount || 0) + 1,
+      availability: false,
+      updatedAt: now,
+    };
+    await dbPut('users', updatedDonor);
+    await NotificationService.create(donorUser.id,
+      `✅ Donation at ${hospital || 'hospital'} recorded. 90-day cooldown starts now. Next eligible: ${new Date(Date.now() + 90*24*60*60*1000).toLocaleDateString()}.`,
+      'donation_recorded', donation.id);
+    await AuditService.log('RECORD_DONATION', currentUser?.id || donorUser.id, donation.id,
+      `Donation recorded: ${donation.bloodGroup} at ${hospital}`);
+    return { success: true, donation };
+  },
+
+  async logManual(data, currentUser) {
+    const deny = AuthService.requireRole('donor')(currentUser);
+    if (deny) return deny;
+    if (currentUser.id !== data.donorId) return { error: 'Access denied' };
+    if (!data.hospital || !data.hospital.trim()) return { error: 'Hospital name is required' };
+    const donorUser = await dbGet('users', currentUser.id);
+    if (daysSince(donorUser.lastDonationDate) < 90 && donorUser.lastDonationDate) {
+      return { error: `Still in 90-day restriction. ${Math.max(0, 90 - daysSince(donorUser.lastDonationDate))} days remaining.` };
+    }
+    return DonationService.record({ ...data, donorId: currentUser.id }, currentUser);
+  },
+
+  async getByDonor(donorId) {
+    return dbGetByIndex('donations', 'donorId', donorId);
+  },
+
+  async getAll(currentUser) {
+    const deny = AuthService.requireRole('admin')(currentUser);
+    if (deny) return deny;
+    return { success: true, donations: await dbGetAll('donations') };
+  },
+};
+
+/* ════════════════════════════════════════════════
+   BACKEND SERVICE LAYER — Notifications
+   Mirrors P10: in-app notifications, read/unread tracking
+   ════════════════════════════════════════════════ */
+
+const NotificationService = {
+  async create(userId, text, type = 'info', relatedId = null) {
+    if (!userId || userId === 'system') return;
+    const notif = {
+      id: uid(), userId, text, type, relatedId,
+      read: false, createdAt: new Date().toISOString(),
+    };
+    await dbPut('notifications', notif);
+    return notif;
+  },
+
+  async getForUser(userId) {
+    const all = await dbGetByIndex('notifications', 'userId', userId);
+    return all.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  },
+
+  async markRead(notifId, userId) {
+    const n = await dbGet('notifications', notifId);
+    if (!n || n.userId !== userId) return { error: 'Not found' };
+    await dbPut('notifications', { ...n, read: true });
+    return { success: true };
+  },
+
+  async markAllRead(userId) {
+    const notifs = await dbGetByIndex('notifications', 'userId', userId);
+    for (const n of notifs) {
+      if (!n.read) await dbPut('notifications', { ...n, read: true });
+    }
+    return { success: true, count: notifs.filter(n => !n.read).length };
+  },
+
+  async getUnreadCount(userId) {
+    const notifs = await dbGetByIndex('notifications', 'userId', userId);
+    return notifs.filter(n => !n.read).length;
+  },
+};
+
+/* ════════════════════════════════════════════════
+   BACKEND SERVICE LAYER — Admin
+   Mirrors P11: stats, audit log, user management
+   ════════════════════════════════════════════════ */
+
+const AdminService = {
+  async getStats(currentUser) {
+    const deny = AuthService.requireRole('admin')(currentUser);
+    if (deny) return deny;
+    const [users, requests, donations] = await Promise.all([
+      dbGetAll('users'), dbGetAll('requests'), dbGetAll('donations')
+    ]);
+    const donors = users.filter(u => u.role === 'donor');
+    const receivers = users.filter(u => u.role === 'receiver');
+    const byBlood = {};
+    BLOOD_TYPES.forEach(t => byBlood[t] = donors.filter(u => u.bloodGroup === t).length);
+    const byCity = {};
+    CITIES.forEach(c => byCity[c] = donors.filter(u => u.city === c).length);
+    return {
+      success: true,
+      totalDonors: donors.length,
+      totalReceivers: receivers.length,
+      totalUsers: users.length,
+      verifiedDonors: donors.filter(u => u.verified).length,
+      pendingVerification: donors.filter(u => !u.verified).length,
+      availableNow: donors.filter(u => canDonate(u)).length,
+      openRequests: requests.filter(r => r.status === 'pending').length,
+      acceptedRequests: requests.filter(r => r.status === 'accepted').length,
+      fulfilledRequests: requests.filter(r => r.status === 'completed').length,
+      totalRequests: requests.length,
+      totalDonations: donations.length,
+      donorsByBlood: byBlood,
+      donorsByCity: byCity,
+    };
+  },
+
+  async getAuditLog(currentUser, limit = 50) {
+    const deny = AuthService.requireRole('admin')(currentUser);
+    if (deny) return deny;
+    const all = await dbGetAll('audit_log');
+    all.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return { success: true, logs: all.slice(0, limit) };
+  },
+};
+
+const AuditService = {
+  async log(action, performedBy, targetId, details = '') {
+    await dbPut('audit_log', {
+      id: uid(), action, performedBy, targetId, details,
+      createdAt: new Date().toISOString(),
+    });
+  },
+};
+
+/* ════════════════════════════════════════════════
+   DATABASE SEED — Demo data
+   ════════════════════════════════════════════════ */
+
+async function seedDatabase() {
+  const count = await dbCount('users');
+  if (count > 0) return; // already seeded
+  setDbStatus('Seeding demo data...');
+  // Seed admin
+  const adminHash = await hashPassword('admin123');
+  const now = new Date().toISOString();
+  await dbPut('users', {
+    id: 'admin_001', name: 'Administrator', email: 'admin@reddrop.com',
+    passwordHash: adminHash, role: 'admin', phone: '', city: '',
+    bloodGroup: null, availability: null, lastDonationDate: null,
+    donationCount: 0, verified: true, isActive: true,
+    profileImg: '', joinDate: now, createdAt: now, updatedAt: now,
+  });
+  // Seed donors
+  const demoPass = await hashPassword('demo');
+  const donors = [
+    { id:'donor_01', name:'Arif Rahman', email:'arif@demo.com', bloodGroup:'O+', city:'Dhaka', phone:'01712345678', availability:true, lastDonationDate:'2025-01-10', donationCount:5, verified:true },
+    { id:'donor_02', name:'Nadia Islam', email:'nadia@demo.com', bloodGroup:'A-', city:'Chittagong', phone:'01798765432', availability:true, lastDonationDate:'2024-11-20', donationCount:3, verified:true },
+    { id:'donor_03', name:'Karim Hossain', email:'karim@demo.com', bloodGroup:'B+', city:'Sylhet', phone:'01812345678', availability:false, lastDonationDate:'2025-03-01', donationCount:8, verified:true },
+    { id:'donor_04', name:'Mitu Begum', email:'mitu@demo.com', bloodGroup:'AB-', city:'Dhaka', phone:'01912345678', availability:true, lastDonationDate:'2024-10-05', donationCount:2, verified:false },
+    { id:'donor_05', name:'Rahim Uddin', email:'rahim@demo.com', bloodGroup:'O-', city:'Rajshahi', phone:'01612340001', availability:true, lastDonationDate:'2024-08-15', donationCount:12, verified:true },
+    { id:'donor_06', name:'Sadia Afrin', email:'sadia@demo.com', bloodGroup:'B-', city:'Dhaka', phone:'01712340002', availability:true, lastDonationDate:'2024-09-20', donationCount:4, verified:true },
+  ];
+  for (const d of donors) {
+    await dbPut('users', { ...d, passwordHash: demoPass, role:'donor', isActive:true, profileImg:'', joinDate: now, createdAt: now, updatedAt: now });
+  }
+  // Seed receiver
+  await dbPut('users', {
+    id:'recv_01', name:'Sumaiya Khatun', email:'sumaiya@demo.com',
+    passwordHash: demoPass, role:'receiver', phone:'01612345678', city:'Dhaka',
+    bloodGroup: null, availability: null, lastDonationDate: null,
+    donationCount: 0, verified: true, isActive: true,
+    profileImg: '', joinDate: now, createdAt: now, updatedAt: now,
+  });
+  // Seed requests
+  const r1id = uid(), r2id = uid();
+  await dbPut('requests', { id:r1id, receiverId:'recv_01', receiverName:'Sumaiya Khatun', bloodGroup:'O+', city:'Dhaka', hospital:'Dhaka Medical College', urgency:'high', notes:'Patient needs for surgery', unitsNeeded:2, status:'pending', acceptedBy:null, acceptedByName:null, createdAt:'2026-05-13T10:00:00.000Z', updatedAt:'2026-05-13T10:00:00.000Z' });
+  await dbPut('requests', { id:r2id, receiverId:'recv_01', receiverName:'Sumaiya Khatun', bloodGroup:'A-', city:'Chittagong', hospital:'Chittagong General Hospital', urgency:'medium', notes:'Post-accident transfusion', unitsNeeded:1, status:'accepted', acceptedBy:'donor_02', acceptedByName:'Nadia Islam', createdAt:'2026-04-28T09:00:00.000Z', updatedAt:'2026-04-28T12:00:00.000Z' });
+  // Seed donations
+  await dbPut('donations', { id:uid(), donorId:'donor_01', requestId:r2id, bloodGroup:'O+', city:'Dhaka', hospital:'Dhaka Medical College', receiverName:'Sumaiya Khatun', date:'2025-01-10', status:'completed', createdAt:'2025-01-10T10:00:00.000Z' });
+  await dbPut('donations', { id:uid(), donorId:'donor_01', requestId:null, bloodGroup:'O+', city:'Dhaka', hospital:'Dhaka Blood Bank', receiverName:'Blood Camp', date:'2024-06-15', status:'completed', createdAt:'2024-06-15T10:00:00.000Z' });
+  // Seed notifications
+  await dbPut('notifications', { id:uid(), userId:'donor_01', text:'New blood request matching your type O+ in Dhaka', type:'blood_request', relatedId:r1id, read:false, createdAt:'2026-05-13T10:05:00.000Z' });
+  await dbPut('notifications', { id:uid(), userId:'donor_01', text:'Your donation record has been updated', type:'donation_recorded', relatedId:null, read:true, createdAt:'2026-05-12T08:00:00.000Z' });
+  await dbPut('notifications', { id:uid(), userId:'recv_01', text:'Your request was accepted by Nadia Islam', type:'request_accepted', relatedId:r2id, read:false, createdAt:'2026-04-28T12:00:00.000Z' });
+  await dbPut('notifications', { id:uid(), userId:'recv_01', text:'Welcome to REDDROP! You can now submit blood requests.', type:'welcome', relatedId:null, read:true, createdAt:'2026-04-01T08:00:00.000Z' });
+  // Seed audit log
+  await dbPut('audit_log', { id:uid(), action:'SYSTEM_INIT', performedBy:'system', targetId:'system', details:'Database seeded with demo data', createdAt: now });
+}
+
+/* ════════════════════════════════════════════════
+   FRONTEND STATE & RENDERING ENGINE
+   ════════════════════════════════════════════════ */
+
+let appState = {
+  view: 'home',      // home | search | app
+  user: null,        // current authenticated user
+  sidebarTab: 'dashboard',
+  searchFilters: { blood: '', city: '', name: '' },
+  adminTab: 'dashboard',
+  // Cached data (refreshed from DB)
+  donors: [],
+  requests: [],
+  myRequests: [],
+  myDonations: [],
+  notifications: [],
+  unreadCount: 0,
+  adminStats: null,
+  adminUsers: [],
+  adminRequests: [],
+  auditLog: [],
+  loading: false,
+};
+
+function setState(patch) {
+  if (typeof patch === 'function') {
+    Object.assign(appState, patch(appState));
+  } else {
+    Object.assign(appState, patch);
+  }
+  render();
+}
+
+/* ─── Data refresh functions ─── */
+async function refreshUserData() {
+  if (!appState.user) return;
+  const u = appState.user;
+  // Refresh user from DB to get latest data
+  const fresh = await dbGet('users', u.id);
+  if (fresh) appState.user = AuthService.sanitize(fresh);
+  // Load notifications
+  appState.notifications = await NotificationService.getForUser(u.id);
+  appState.unreadCount = appState.notifications.filter(n => !n.read).length;
+  if (u.role === 'donor') {
+    appState.myDonations = await DonationService.getByDonor(u.id);
+    appState.myDonations.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
+  if (u.role === 'receiver') {
+    appState.myRequests = await RequestService.getAll({ receiverId: u.id });
+  }
+}
+
+async function refreshAdminData() {
+  if (!appState.user || appState.user.role !== 'admin') return;
+  const [statsRes, usersRes, requests, auditRes] = await Promise.all([
+    AdminService.getStats(appState.user),
+    UserService.getAllUsers(appState.user),
+    RequestService.getAll(),
+    AdminService.getAuditLog(appState.user),
+  ]);
+  appState.adminStats = statsRes.success ? statsRes : null;
+  appState.adminUsers = usersRes.users || [];
+  appState.adminRequests = requests;
+  appState.auditLog = auditRes.logs || [];
+}
+
+async function refreshDonors() {
+  appState.donors = await UserService.getDonors({ verified: true, ...appState.searchFilters });
+}
+
+/* ─── Toast system ─── */
+function toast(msg, type = 'info', duration = 3500) {
+  const icons = { success: '✓', error: '✗', info: 'ℹ', warn: '⚠' };
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span style="font-size:16px">${icons[type]||'ℹ'}</span><span>${msg}</span>`;
+  document.getElementById('toast').appendChild(t);
+  setTimeout(() => { t.style.animation = 'slideIn 0.2s ease reverse'; setTimeout(() => t.remove(), 200); }, duration);
+}
+
+function setDbStatus(msg) {
+  const el = document.getElementById('db-status');
+  if (el) el.textContent = msg;
+}
+
+function getInitials(name) {
+  return (name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
+function avatarColor(role) {
+  return role === 'donor' ? 'avatar-red' : role === 'receiver' ? 'avatar-blue' : 'avatar-gold';
+}
+function timeAgo(dateStr) {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr);
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 30) return `${days}d ago`;
+  return new Date(dateStr).toLocaleDateString();
+}
+
+/* ════════════════════════════════════════════════
+   HTML RENDERING
+   ════════════════════════════════════════════════ */
+
+function navHTML() {
+  const u = appState.user;
+  const unread = appState.unreadCount;
+  return `<nav class="nav">
+    <div class="nav-logo" onclick="navigateTo('home')">
+      <div class="logo-drop">🩸</div>
+      <span class="nav-title">Red<span>Drop</span></span>
+    </div>
+    <div class="nav-actions">
+      ${u ? `
+        ${u.role !== 'admin' ? `<button class="btn btn-ghost btn-sm" onclick="navigateTo('search')">🔍 Find Donors</button>` : ''}
+        <button class="btn btn-ghost btn-sm${unread > 0 ? ' btn-icon' : ''}" onclick="navigateTo('app','notifications')" style="${unread > 0 ? 'position:relative' : ''}">
+          🔔${unread > 0 ? ` <span style="color:var(--red);font-weight:700">${unread}</span>` : ''}
+        </button>
+        <div class="avatar av-42 ${avatarColor(u.role)}" style="cursor:pointer" onclick="navigateTo('app','dashboard')">${getInitials(u.name)}</div>
+        <button class="btn btn-ghost btn-sm" onclick="doLogout()">Sign out</button>
+      ` : `
+        <button class="btn btn-ghost btn-sm" onclick="navigateTo('search')">Find Donors</button>
+        <button class="btn btn-ghost btn-sm" onclick="openModal('login')">Sign in</button>
+        <button class="btn btn-primary btn-sm" onclick="openModal('register')">Join Now</button>
+      `}
+    </div>
+  </nav>`;
+}
+
+function navigateTo(view, tab) {
+  appState.view = view;
+  if (tab) appState.sidebarTab = tab;
+  if (view === 'search') refreshDonors().then(render);
+  else if (view === 'app' && appState.user) refreshUserData().then(() => { if(appState.user?.role==='admin') refreshAdminData().then(render); else render(); });
+  else render();
+}
+
+/* ─── HOME PAGE ─── */
+function homeHTML() {
+  return `
+  ${navHTML()}
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <p style="font-size:12px;color:var(--red);letter-spacing:3px;text-transform:uppercase;margin-bottom:1.25rem;font-weight:600">Every drop counts</p>
+    <h1 class="hero-title serif">Connect <span class="hero-drop">Blood Donors</span><br/>with those in Need</h1>
+    <p class="hero-sub">REDDROP bridges the gap between voluntary donors and emergency receivers — fast, intelligent, life-saving.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary" style="padding:13px 32px;font-size:16px;border-radius:10px" onclick="openModal('register')">🩸 Become a Donor</button>
+      <button class="btn btn-ghost" style="padding:13px 32px;font-size:16px;border-radius:10px" onclick="openModal('request_blood')">💉 Request Blood</button>
+    </div>
+
+  </div>
+  <div style="max-width:1100px;margin:0 auto;padding:0 2rem 4rem">
+    <div class="features-grid">
+      ${[
+        ['🩸','Blood Compatibility Matching','Smart algorithm finds compatible donors based on blood type, location & 90-day eligibility'],
+        ['🔔','Instant Notifications','Eligible donors in your area are notified the moment a matching request is submitted'],
+        ['🛡️','Admin Verified Donors','Every donor is verified by our admin team before appearing in search results'],
+        ['📊','Full Lifecycle Tracking','Request states: Pending → Accepted → Completed, with audit trail and history'],
+      ].map(([ic,t,d]) => `
+        <div class="feature-card">
+          <div style="font-size:2.5rem;margin-bottom:1rem">${ic}</div>
+          <div style="font-weight:600;font-size:17px;margin-bottom:0.5rem">${t}</div>
+          <div class="text-muted text-sm">${d}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="card" style="padding:2.5rem;text-align:center">
+      <h2 class="serif" style="font-size:2rem;margin-bottom:0.5rem">Blood Compatibility Guide</h2>
+      <p class="text-muted text-sm" style="margin-bottom:2rem">Who can donate to whom? (Donor → Receiver)</p>
+      <div style="overflow-x:auto">
+        <table class="compat" style="margin:0 auto">
+          <tr><th style="background:var(--surface2)">Donor ↓ / Receiver →</th>${BLOOD_TYPES.map(t=>`<th>${t}</th>`).join('')}</tr>
+          ${BLOOD_TYPES.map(donor => `
+            <tr>
+              <td style="font-weight:600;background:var(--surface2)">${donor}</td>
+              ${BLOOD_TYPES.map(recv => `<td class="${BLOOD_COMPAT[donor].includes(recv)?'compat-yes':'compat-no'}">${BLOOD_COMPAT[donor].includes(recv)?'✓':''}</td>`).join('')}
+            </tr>
+          `).join('')}
+        </table>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem">
+      <div class="card" style="background:linear-gradient(135deg,#1a0505,#200808);border-color:#3a1010;padding:2rem">
+        <h3 style="font-size:20px;margin-bottom:0.5rem">🩸 Are you a Donor?</h3>
+        <p class="text-muted text-sm" style="margin-bottom:1.5rem">Register once and save lives whenever you're eligible. Your next donation matters.</p>
+        <button class="btn btn-primary" onclick="openModal('register')">Register as Donor →</button>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg,#051020,#071828);border-color:#103050;padding:2rem">
+        <h3 style="font-size:20px;margin-bottom:0.5rem">💉 Need Blood?</h3>
+        <p class="text-muted text-sm" style="margin-bottom:1.5rem">Submit a request and compatible donors near you will be notified instantly.</p>
+        <button class="btn btn-ghost" style="border-color:var(--blue);color:var(--blue-text)" onclick="openModal('request_blood')">Request Blood Now →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ─── SEARCH PAGE ─── */
+function searchHTML() {
+  const { blood, city, name } = appState.searchFilters;
+  const donors = appState.donors;
+  return `
+  ${navHTML()}
+  <div class="page">
+    <div class="card-header" style="margin-bottom:1.5rem">
+      <div>
+        <h2 class="card-title serif" style="font-size:26px">Find a Donor</h2>
+        <p class="text-muted text-sm">${donors.length} verified donor(s) found</p>
+      </div>
+    </div>
+    <div class="search-bar">
+      <input placeholder="Search by name..." value="${name}" oninput="handleSearchInput('name',event.target.value)" style="max-width:260px"/>
+      <select onchange="handleSearchInput('blood',event.target.value)">
+        <option value="">All Blood Types</option>
+        ${BLOOD_TYPES.map(t => `<option value="${t}" ${blood===t?'selected':''}>${t}</option>`).join('')}
+      </select>
+      <select onchange="handleSearchInput('city',event.target.value)">
+        <option value="">All Cities</option>
+        ${CITIES.map(c => `<option value="${c}" ${city===c?'selected':''}>${c}</option>`).join('')}
+      </select>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);white-space:nowrap;cursor:pointer;margin:0">
+        <input type="checkbox" style="width:auto;padding:0" onchange="handleSearchToggle('available',event.target.checked)"/>
+        Available only
+      </label>
+    </div>
+    ${donors.length === 0 ? `
+      <div class="empty">
+        <div class="empty-icon">🔍</div>
+        <p>No donors found matching your criteria.</p>
+        <p class="text-xs" style="margin-top:8px">Try adjusting your filters or check back later.</p>
+      </div>` :
+    donors.map(d => `
+      <div class="donor-card" style="margin-bottom:10px">
+        <div class="blood-badge bb-42">${d.bloodGroup}</div>
+        <div class="donor-info">
+          <div class="donor-name">${d.name}</div>
+          <div class="donor-meta">📍 ${d.city || 'Unknown'} &nbsp;·&nbsp; ${d.donationCount || 0} donation${(d.donationCount||0)!==1?'s':''} &nbsp;·&nbsp; Joined ${new Date(d.joinDate||d.createdAt).toLocaleDateString()}</div>
+          ${canDonate(d) ? `<div class="text-xs text-muted" style="margin-top:2px">📞 Contact visible after request acceptance</div>` : `<div class="text-xs text-muted" style="margin-top:2px">⏳ In 90-day cooldown · ${Math.max(0,90-daysSince(d.lastDonationDate))}d remaining</div>`}
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+          <span class="badge ${canDonate(d)?'badge-green':'badge-gray'}">
+            <span class="avail-dot ${canDonate(d)?'avail-yes':'avail-no'}"></span>
+            ${canDonate(d) ? 'Available' : 'Unavailable'}
+          </span>
+          ${appState.user && appState.user.role === 'receiver' ? `<button class="btn btn-primary btn-sm" onclick="openRequestModal('${d.bloodGroup}')">Request</button>` : ''}
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+async function handleSearchInput(field, value) {
+  appState.searchFilters[field] = value;
+  await refreshDonors();
+  render();
+}
+async function handleSearchToggle(field, checked) {
+  appState.searchFilters[field] = checked || '';
+  await refreshDonors();
+  render();
+}
+function openRequestModal(blood) {
+  appState.prefillBlood = blood;
+  openModal('new_request');
+}
+
+/* ─── APP PAGE (Authenticated) ─── */
+function appHTML() {
+  const u = appState.user;
+  if (!u) return homeHTML();
+  return `
+  ${navHTML()}
+  <div class="page">
+    <div class="two-col">
+      ${sidebarHTML(u)}
+      <div class="main-content">${mainPanelHTML(u)}</div>
+    </div>
+  </div>`;
+}
+
+function sidebarHTML(u) {
+  const tabs = {
+    donor:    ['dashboard','profile','donate','my-donations','notifications'],
+    receiver: ['dashboard','profile','my-requests','notifications'],
+    admin:    ['dashboard','users','requests','analytics','audit'],
+  }[u.role] || [];
+  const icons = { dashboard:'🏠', profile:'👤', donate:'🩸', 'my-donations':'📋',
+    notifications:'🔔', 'my-requests':'📋', users:'👥', requests:'📊', analytics:'📈', audit:'🔐' };
+  const labels = { dashboard:'Dashboard', profile:'My Profile', donate:'Donate Blood',
+    'my-donations':'Donation History', notifications:'Notifications',
+    'my-requests':'My Requests', users:'Users', requests:'Requests', analytics:'Analytics', audit:'Audit Log' };
+  const unread = appState.unreadCount;
+  return `<div class="sidebar">
+    <div class="sidebar-user">
+      <div class="avatar av-42 ${avatarColor(u.role)}">${getInitials(u.name)}</div>
+      <div>
+        <div class="sidebar-name">${u.name}</div>
+        <div class="sidebar-role">${u.role === 'admin' ? 'Administrator' : u.bloodGroup ? u.bloodGroup + ' · ' + u.role : u.role}</div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      ${tabs.map(t => `
+        <div class="sidebar-item ${appState.sidebarTab===t?'active':''}" onclick="switchTab('${t}')">
+          <span class="sidebar-icon">${icons[t]}</span>${labels[t]}
+          ${t==='notifications'&&unread>0?`<span class="sidebar-badge">${unread}</span>`:''}
+        </div>
+      `).join('')}
+      <hr class="divider"/>
+      <div class="sidebar-item" onclick="doLogout()"><span class="sidebar-icon">🚪</span>Sign Out</div>
+    </div>
+  </div>`;
+}
+
+async function switchTab(tab) {
+  appState.sidebarTab = tab;
+  if (appState.user?.role === 'admin') await refreshAdminData();
+  else await refreshUserData();
+  render();
+}
+
+function mainPanelHTML(u) {
+  const tab = appState.sidebarTab;
+  if (u.role === 'admin') {
+    if (tab === 'dashboard') return adminDashHTML();
+    if (tab === 'users')     return adminUsersHTML();
+    if (tab === 'requests')  return adminRequestsHTML();
+    if (tab === 'analytics') return adminAnalyticsHTML();
+    if (tab === 'audit')     return adminAuditHTML();
+  }
+  if (tab === 'dashboard')    return userDashHTML(u);
+  if (tab === 'profile')      return profileHTML(u);
+  if (tab === 'donate')       return donateHTML(u);
+  if (tab === 'my-donations') return donationHistoryHTML(u);
+  if (tab === 'my-requests')  return myRequestsHTML(u);
+  if (tab === 'notifications')return notificationsHTML(u);
+  return userDashHTML(u);
+}
+
+/* ─── USER DASHBOARD ─── */
+function userDashHTML(u) {
+  const eligible = u.role === 'donor' && canDonate(u);
+  const myReqs = appState.myRequests || [];
+  const myDons = appState.myDonations || [];
+  const notifs = appState.notifications.slice(0, 3);
+  const days = daysSince(u.lastDonationDate);
+  return `
+  <h2 class="serif" style="font-size:28px;margin-bottom:1.5rem">Welcome back, ${u.name.split(' ')[0]} 👋</h2>
+  <div class="stats-grid">
+    ${u.role === 'donor' ? `
+      <div class="stat-card"><div class="stat-label">Total Donations</div><div class="stat-value stat-red">${u.donationCount || 0}</div></div>
+      <div class="stat-card"><div class="stat-label">Days Since Last</div><div class="stat-value stat-amber">${days === 9999 ? '—' : days}</div></div>
+      <div class="stat-card"><div class="stat-label">Status</div><div class="stat-value" style="font-size:16px">${eligible ? '✅ Eligible' : '⏳ Cooling'}</div></div>
+    ` : `
+      <div class="stat-card"><div class="stat-label">Requests Made</div><div class="stat-value stat-blue">${myReqs.length}</div></div>
+      <div class="stat-card"><div class="stat-label">Accepted</div><div class="stat-value stat-green">${myReqs.filter(r=>r.status==='accepted').length}</div></div>
+      <div class="stat-card"><div class="stat-label">Fulfilled</div><div class="stat-value stat-amber">${myReqs.filter(r=>r.status==='completed').length}</div></div>
+    `}
+    <div class="stat-card"><div class="stat-label">Unread Alerts</div><div class="stat-value stat-blue">${appState.unreadCount}</div></div>
+  </div>
+
+  ${u.role === 'donor' && !u.verified ? `
+    <div class="card warning-box" style="margin-bottom:1rem;border-radius:var(--radius-lg)">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <span style="font-size:1.5rem">⚠️</span>
+        <div>
+          <div style="font-weight:600;color:var(--amber-text)">Account Pending Verification</div>
+          <div class="text-muted text-sm">An admin will verify your account shortly. You'll receive a notification once approved.</div>
+        </div>
+      </div>
+    </div>
+  ` : ''}
+
+  ${u.role === 'donor' ? `
+    <div class="card">
+      <div class="card-header"><span class="card-title">Eligibility & Availability</span></div>
+      <div style="display:flex;align-items:center;gap:1.5rem">
+        <div style="flex:1">
+          <div class="text-xs text-muted" style="margin-bottom:8px">90-day cooldown progress</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100, days === 9999 ? 100 : Math.round(days/90*100))}%"></div></div>
+          <div class="text-xs text-muted" style="margin-top:6px">${days === 9999 ? 'No donation recorded yet' : `${Math.min(days,90)} / 90 days`}</div>
+        </div>
+        <div class="blood-badge bb-52">${u.bloodGroup || '?'}</div>
+      </div>
+      <div style="margin-top:1.25rem;display:flex;gap:8px;flex-wrap:wrap">
+        ${eligible ? `<button class="btn btn-primary btn-sm" onclick="switchTab('donate')">Log Donation</button>` : ''}
+        <button class="btn btn-ghost btn-sm" onclick="doToggleAvailability()">
+          ${u.availability ? '⏸ Mark Unavailable' : '▶ Mark Available'}
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="navigateTo('search')">🔍 Browse Requests</button>
+      </div>
+    </div>
+  ` : `
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">My Recent Requests</span>
+        <button class="btn btn-primary btn-sm" onclick="openModal('new_request')">+ New Request</button>
+      </div>
+      ${myReqs.length === 0 ? '<div class="empty" style="padding:2rem"><div class="empty-icon">💉</div><p>No requests yet.</p></div>' :
+        myReqs.slice(0,3).map(r => requestRowHTML(r)).join('')}
+    </div>
+  `}
+
+  <div class="card" style="margin-top:1rem">
+    <div class="card-header">
+      <span class="card-title">Recent Notifications</span>
+      <button class="btn btn-ghost btn-sm" onclick="switchTab('notifications')">View all</button>
+    </div>
+    ${notifs.length === 0 ? '<p class="text-muted text-sm">No notifications yet.</p>' :
+    notifs.map(n => `
+      <div class="notif-item" onclick="markNotifRead('${n.id}')">
+        <div class="notif-dot ${n.read?'read':''}"></div>
+        <div class="notif-content">
+          <div class="notif-text" style="${!n.read?'font-weight:500':''}">${n.text}</div>
+          <div class="notif-time">${timeAgo(n.createdAt)}</div>
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function requestRowHTML(r) {
+  const colors = { pending:'badge-amber', accepted:'badge-green', completed:'badge-blue', cancelled:'badge-gray', expired:'badge-purple' };
+  const urgencyClass = { high:'urgency-high', medium:'urgency-medium', low:'urgency-low' }[r.urgency] || '';
+  return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+    <div class="blood-badge bb-36">${r.bloodGroup}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:500">${r.hospital} <span class="${urgencyClass}" style="font-size:12px">(${r.urgency})</span></div>
+      <div class="text-muted text-xs">${r.city} · ${new Date(r.createdAt).toLocaleDateString()}</div>
+    </div>
+    <span class="badge ${colors[r.status]}">${r.status}</span>
+  </div>`;
+}
+
+/* ─── PROFILE PAGE ─── */
+function profileHTML(u) {
+  return `<div class="card">
+    <div class="card-header"><span class="card-title serif" style="font-size:22px">My Profile</span></div>
+    <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)">
+      <div class="avatar av-72 ${avatarColor(u.role)}">${getInitials(u.name)}</div>
+      <div>
+        <div style="font-size:22px;font-weight:600">${u.name}</div>
+        <div class="text-muted">${u.email}</div>
+        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+          ${u.bloodGroup ? `<span class="badge badge-red">${u.bloodGroup}</span>` : ''}
+          <span class="badge ${u.verified?'badge-green':'badge-amber'}">${u.verified?'✓ Verified':'⏳ Pending Verification'}</span>
+          <span class="badge badge-gray">${u.role}</span>
+        </div>
+        <div class="text-xs text-muted" style="margin-top:6px">Member since ${new Date(u.joinDate||u.createdAt).toLocaleDateString()}</div>
+      </div>
+    </div>
+    <div class="form-row" style="margin-bottom:1rem">
+      <div class="form-group"><label>Full Name</label><input value="${u.name}" id="p-name"/></div>
+      <div class="form-group"><label>Phone Number</label><input value="${u.phone||''}" id="p-phone" placeholder="017XXXXXXXX"/></div>
+    </div>
+    ${u.role === 'donor' ? `
+    <div class="form-row" style="margin-bottom:1rem">
+      <div class="form-group"><label>Blood Group</label>
+        <select id="p-blood">${BLOOD_TYPES.map(t=>`<option value="${t}" ${u.bloodGroup===t?'selected':''}>${t}</option>`).join('')}</select>
+      </div>
+      <div class="form-group"><label>City</label>
+        <select id="p-city">${CITIES.map(c=>`<option value="${c}" ${u.city===c?'selected':''}>${c}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Availability Status</label>
+      <select id="p-avail">
+        <option value="true" ${u.availability?'selected':''}>✅ Available to Donate</option>
+        <option value="false" ${!u.availability?'selected':''}>⏸ Not Available</option>
+      </select>
+    </div>
+    ` : ''}
+    <button class="btn btn-primary" onclick="doSaveProfile()">Save Changes</button>
+  </div>`;
+}
+
+/* ─── DONATE / LOG DONATION ─── */
+function donateHTML(u) {
+  const restricted = u.lastDonationDate && daysSince(u.lastDonationDate) < 90;
+  const daysLeft = Math.max(0, 90 - daysSince(u.lastDonationDate));
+  if (restricted) {
+    return `<div class="card">
+      <div class="card-title serif" style="font-size:22px;margin-bottom:1rem">Log a Donation</div>
+      <div style="text-align:center;padding:2.5rem 1rem">
+        <div style="font-size:3rem;margin-bottom:1rem">⏳</div>
+        <div style="font-weight:600;font-size:18px">90-Day Restriction Active</div>
+        <div class="text-muted text-sm" style="margin-top:0.5rem">Last donation: ${u.lastDonationDate}</div>
+        <div class="text-muted text-sm">You can donate again in <strong style="color:var(--red)">${daysLeft} days</strong></div>
+        <div class="progress-bar" style="max-width:300px;margin:1.5rem auto">
+          <div class="progress-fill" style="width:${Math.round(daysSince(u.lastDonationDate)/90*100)}%"></div>
+        </div>
+        <div class="text-xs text-muted">Next eligible: ${new Date(Date.now() + daysLeft*24*60*60*1000).toLocaleDateString()}</div>
+      </div>
+    </div>`;
+  }
+  return `<div class="card">
+    <div class="card-title serif" style="font-size:22px;margin-bottom:0.5rem">Log a Donation</div>
+    <p class="text-muted text-sm" style="margin-bottom:1.5rem">Record a completed blood donation. This will start your 90-day cooldown.</p>
+    <div class="form-group"><label>Hospital / Blood Bank *</label><input id="d-hospital" placeholder="e.g. Dhaka Medical College Hospital"/></div>
+    <div class="form-row">
+      <div class="form-group"><label>City</label>
+        <select id="d-city">${CITIES.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
+      </div>
+      <div class="form-group"><label>Donation Date *</label>
+        <input type="date" id="d-date" value="${new Date().toISOString().split('T')[0]}" max="${new Date().toISOString().split('T')[0]}"/>
+      </div>
+    </div>
+    <div class="form-group"><label>Receiver Name (if known)</label><input id="d-receiver" placeholder="Optional"/></div>
+    <div class="info-box" style="margin-bottom:1rem">
+      ℹ After logging, your availability will be set to <strong>Unavailable</strong> and 90-day restriction starts.
+    </div>
+    <button class="btn btn-primary" onclick="doLogDonation()">🩸 Confirm & Log Donation</button>
+  </div>`;
+}
+
+/* ─── DONATION HISTORY ─── */
+function donationHistoryHTML(u) {
+  const donations = appState.myDonations || [];
+  return `<div class="card">
+    <div class="card-header">
+      <div><span class="card-title serif" style="font-size:22px">Donation History</span>
+      <div class="text-muted text-sm">${donations.length} total donation${donations.length!==1?'s':''}</div></div>
+    </div>
+    ${donations.length === 0 ? '<div class="empty"><div class="empty-icon">📋</div><p>No donations recorded yet.</p></div>' :
+    `<table class="table">
+      <thead><tr><th>Date</th><th>Blood Type</th><th>Hospital</th><th>City</th><th>Receiver</th><th>Status</th></tr></thead>
+      <tbody>
+        ${donations.map(d => `<tr>
+          <td>${d.date || new Date(d.createdAt).toLocaleDateString()}</td>
+          <td><span class="badge badge-red">${d.bloodGroup}</span></td>
+          <td>${d.hospital}</td>
+          <td>${d.city || '—'}</td>
+          <td class="text-muted text-sm">${d.receiverName || 'Anonymous'}</td>
+          <td><span class="badge badge-green">${d.status}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`}
+  </div>`;
+}
+
+/* ─── MY REQUESTS (Receiver) ─── */
+async function doAcceptRequest(requestId) {
+  const res = await RequestService.updateStatus(requestId, 'accepted', appState.user);
+  if (res.error) { toast(res.error, 'error'); return; }
+  toast('Request accepted! Donation recorded.', 'success');
+  // Refresh user (donation count, availability)
+  const fresh = await dbGet('users', appState.user.id);
+  if (fresh) appState.user = AuthService.sanitize(fresh);
+  await refreshUserData();
+  render();
+}
+
+function myRequestsHTML(u) {
+  const mine = appState.myRequests || [];
+  return `<div class="card">
+    <div class="card-header">
+      <span class="card-title serif" style="font-size:22px">My Blood Requests</span>
+      <button class="btn btn-primary btn-sm" onclick="openModal('new_request')">+ New Request</button>
+    </div>
+    ${mine.length === 0 ? '<div class="empty"><div class="empty-icon">💉</div><p>No requests yet. Create your first.</p></div>' :
+    mine.map(r => `
+      <div class="card card-sm" style="margin-bottom:10px;background:var(--surface2);border:1px solid var(--border)">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div class="blood-badge bb-42">${r.bloodGroup}</div>
+          <div style="flex:1">
+            <div style="font-weight:600">${r.hospital}</div>
+            <div class="text-muted text-sm">${r.city} · ${new Date(r.createdAt).toLocaleDateString()} · ${r.urgency} urgency</div>
+            ${r.notes ? `<div class="text-xs text-muted" style="margin-top:3px">${r.notes}</div>` : ''}
+            <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <span class="badge ${{pending:'badge-amber',accepted:'badge-green',completed:'badge-blue',cancelled:'badge-gray',expired:'badge-purple'}[r.status]}">${r.status}</span>
+              <span class="text-xs text-muted">Units: ${r.unitsNeeded || 1}</span>
+            </div>
+            ${r.acceptedByName ? `<div class="text-sm" style="margin-top:6px;color:var(--green-text)">✓ Accepted by: <strong>${r.acceptedByName}</strong></div>` : ''}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            ${r.status === 'pending' ? `<button class="btn btn-danger btn-sm" onclick="doCancelRequest('${r.id}')">Cancel</button>` : ''}
+            ${r.status === 'accepted' ? `<button class="btn btn-success btn-sm" onclick="doCompleteRequest('${r.id}')">Mark Done</button>` : ''}
+          </div>
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+/* ─── NOTIFICATIONS ─── */
+function notificationsHTML(u) {
+  const notifs = appState.notifications;
+  return `<div class="card">
+    <div class="card-header">
+      <span class="card-title serif" style="font-size:22px">Notifications</span>
+      <button class="btn btn-ghost btn-sm" onclick="doMarkAllRead()">✓ Mark all read</button>
+    </div>
+    ${notifs.length === 0 ? '<div class="empty"><div class="empty-icon">🔔</div><p>No notifications yet.</p></div>' :
+    notifs.map(n => `
+      <div class="notif-item" onclick="markNotifRead('${n.id}')">
+        <div class="notif-dot ${n.read?'read':''}"></div>
+        <div class="notif-content">
+          <div class="notif-text" style="${!n.read?'font-weight:500':''}">${n.text}</div>
+          <div class="notif-time">${timeAgo(n.createdAt)}</div>
+        </div>
+        ${!n.read ? `<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();markNotifRead('${n.id}')">✓</button>` : ''}
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+/* ─── ADMIN DASHBOARD ─── */
+function adminDashHTML() {
+  const s = appState.adminStats;
+  if (!s) return `<div class="empty"><div class="loader-spin" style="margin:2rem auto"></div></div>`;
+  const recentReqs = appState.adminRequests.slice(0, 5);
+  const pendingUsers = appState.adminUsers.filter(u => !u.verified && u.role === 'donor');
+  return `
+  <h2 class="serif" style="font-size:28px;margin-bottom:1.5rem">Admin Dashboard</h2>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value stat-blue">${s.totalUsers}</div></div>
+    <div class="stat-card"><div class="stat-label">Donors</div><div class="stat-value stat-red">${s.totalDonors}</div></div>
+    <div class="stat-card"><div class="stat-label">Receivers</div><div class="stat-value stat-amber">${s.totalReceivers}</div></div>
+    <div class="stat-card"><div class="stat-label">Verified</div><div class="stat-value stat-green">${s.verifiedDonors}</div></div>
+    <div class="stat-card"><div class="stat-label">Available Now</div><div class="stat-value stat-green">${s.availableNow}</div></div>
+    <div class="stat-card"><div class="stat-label">Open Requests</div><div class="stat-value stat-amber">${s.openRequests}</div></div>
+    <div class="stat-card"><div class="stat-label">Fulfilled</div><div class="stat-value stat-green">${s.fulfilledRequests}</div></div>
+    <div class="stat-card"><div class="stat-label">Total Donations</div><div class="stat-value stat-red">${s.totalDonations}</div></div>
+  </div>
+  ${pendingUsers.length > 0 ? `
+    <div class="card" style="margin-bottom:1rem;border-color:#5a3000;background:#100a00">
+      <div class="card-header"><span class="card-title">⚠️ Pending Verifications (${pendingUsers.length})</span></div>
+      ${pendingUsers.map(u => `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div class="avatar av-36 ${avatarColor(u.role)}">${getInitials(u.name)}</div>
+          <div style="flex:1">
+            <div style="font-weight:500;font-size:14px">${u.name}</div>
+            <div class="text-xs text-muted">${u.email} · ${u.bloodGroup} · ${u.city}</div>
+          </div>
+          <button class="btn btn-success btn-sm" onclick="doVerifyUser('${u.id}')">Verify</button>
+          <button class="btn btn-danger btn-sm" onclick="doDeleteUser('${u.id}')">Delete</button>
+        </div>
+      `).join('')}
+    </div>
+  ` : ''}
+  <div class="card">
+    <div class="card-header"><span class="card-title">Recent Blood Requests</span>
+      <button class="btn btn-ghost btn-sm" onclick="switchTab('requests')">View all</button></div>
+    <table class="table">
+      <thead><tr><th>Blood</th><th>City</th><th>Hospital</th><th>Urgency</th><th>Status</th><th>Date</th></tr></thead>
+      <tbody>${recentReqs.map(r => `<tr>
+        <td><span class="badge badge-red">${r.bloodGroup}</span></td>
+        <td>${r.city}</td>
+        <td>${r.hospital}</td>
+        <td><span class="${{high:'urgency-high',medium:'urgency-medium',low:'urgency-low'}[r.urgency]}">${r.urgency}</span></td>
+        <td><span class="badge ${{pending:'badge-amber',accepted:'badge-green',completed:'badge-blue',cancelled:'badge-gray',expired:'badge-purple'}[r.status]}">${r.status}</span></td>
+        <td class="text-xs text-muted">${timeAgo(r.createdAt)}</td>
+      </tr>`).join('')}</tbody>
+    </table>
+  </div>`;
+}
+
+/* ─── ADMIN USERS ─── */
+function adminUsersHTML() {
+  const users = appState.adminUsers;
+  return `<div class="card">
+    <div class="card-header"><span class="card-title serif" style="font-size:22px">User Management</span>
+      <span class="badge badge-gray">${users.length} users</span></div>
+    <table class="table">
+      <thead><tr><th>Name</th><th>Role</th><th>Blood</th><th>City</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+      <tbody>${users.map(u => `<tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="avatar av-36 ${avatarColor(u.role)}">${getInitials(u.name)}</div>
+            <div><div style="font-weight:500;font-size:14px">${u.name}</div><div class="text-xs text-muted">${u.email}</div></div>
+          </div>
+        </td>
+        <td><span class="badge badge-gray">${u.role}</span></td>
+        <td>${u.bloodGroup?`<span class="badge badge-red">${u.bloodGroup}</span>`:'-'}</td>
+        <td class="text-sm">${u.city||'-'}</td>
+        <td>
+          ${u.role==='donor'?`<span class="badge ${u.verified?'badge-green':'badge-amber'}">${u.verified?'✓ Verified':'⏳ Pending'}</span>`:''}
+          ${!u.isActive?`<span class="badge badge-gray">Deactivated</span>`:''}
+        </td>
+        <td class="text-xs text-muted">${new Date(u.createdAt||u.joinDate).toLocaleDateString()}</td>
+        <td>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            ${!u.verified&&u.role==='donor'?`<button class="btn btn-success btn-sm" onclick="doVerifyUser('${u.id}')">Verify</button>`:''}
+            ${u.isActive&&u.role!=='admin'?`<button class="btn btn-ghost btn-sm" onclick="doDeactivateUser('${u.id}')">Deactivate</button>`:''}
+            ${!u.isActive?`<button class="btn btn-success btn-sm" onclick="doActivateUser('${u.id}')">Activate</button>`:''}
+            ${u.role!=='admin'?`<button class="btn btn-danger btn-sm" onclick="doDeleteUser('${u.id}')">Delete</button>`:''}
+          </div>
+        </td>
+      </tr>`).join('')}</tbody>
+    </table>
+  </div>`;
+}
+
+/* ─── ADMIN REQUESTS ─── */
+function adminRequestsHTML() {
+  const reqs = appState.adminRequests;
+  return `<div class="card">
+    <div class="card-header"><span class="card-title serif" style="font-size:22px">All Blood Requests</span>
+      <span class="badge badge-gray">${reqs.length} total</span></div>
+    <table class="table">
+      <thead><tr><th>Blood</th><th>Receiver</th><th>Hospital</th><th>City</th><th>Urgency</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+      <tbody>${reqs.map(r => `<tr>
+        <td><span class="badge badge-red">${r.bloodGroup}</span></td>
+        <td class="text-sm">${r.receiverName}</td>
+        <td class="text-sm">${r.hospital}</td>
+        <td class="text-sm">${r.city}</td>
+        <td><span class="${{high:'urgency-high',medium:'urgency-medium',low:'urgency-low'}[r.urgency]}">${r.urgency}</span></td>
+        <td><span class="badge ${{pending:'badge-amber',accepted:'badge-green',completed:'badge-blue',cancelled:'badge-gray',expired:'badge-purple'}[r.status]}">${r.status}</span></td>
+        <td class="text-xs text-muted">${new Date(r.createdAt).toLocaleDateString()}</td>
+        <td><button class="btn btn-danger btn-sm" onclick="doAdminDeleteRequest('${r.id}')">Delete</button></td>
+      </tr>`).join('')}</tbody>
+    </table>
+  </div>`;
+}
+
+/* ─── ADMIN ANALYTICS ─── */
+function adminAnalyticsHTML() {
+  const s = appState.adminStats;
+  if (!s) return '<div class="empty"><p>Loading...</p></div>';
+  const maxBlood = Math.max(...Object.values(s.donorsByBlood), 1);
+  const maxCity = Math.max(...Object.values(s.donorsByCity), 1);
+  return `
+  <h2 class="serif" style="font-size:26px;margin-bottom:1.5rem">Analytics</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="card">
+      <div class="card-title">Donors by Blood Type</div>
+      <div class="chart-bar-wrap">
+        ${BLOOD_TYPES.map(t => `
+          <div class="bar-col">
+            <div class="bar-val">${s.donorsByBlood[t]||0}</div>
+            <div class="bar" style="height:${Math.max(4,Math.round((s.donorsByBlood[t]||0)/maxBlood*90))}px"></div>
+            <div class="bar-label">${t}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:1rem">Request Status Distribution</div>
+      ${[['pending','badge-amber'],['accepted','badge-green'],['completed','badge-blue'],['cancelled','badge-gray'],['expired','badge-purple']].map(([s2,c]) => {
+        const count = appState.adminRequests.filter(r => r.status===s2).length;
+        const pct = appState.adminRequests.length ? Math.round(count/appState.adminRequests.length*100) : 0;
+        return `<div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="text-sm">${s2}</span><span class="badge ${c}">${count}</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:1rem">Donors by City</div>
+      ${CITIES.map(c => `
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span class="text-sm" style="min-width:90px">${c}</span>
+          <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:${s.donorsByCity[c]?Math.round(s.donorsByCity[c]/maxCity*100):0}%"></div></div>
+          <span class="text-xs text-muted">${s.donorsByCity[c]||0}</span>
+        </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:1rem">Platform Summary</div>
+      ${[
+        ['Total Users', s.totalUsers],
+        ['Verified Donors', s.verifiedDonors],
+        ['Pending Verification', s.pendingVerification],
+        ['Available Now', s.availableNow],
+        ['Total Requests', s.totalRequests],
+        ['Open Requests', s.openRequests],
+        ['Fulfilled Requests', s.fulfilledRequests],
+        ['Total Donations', s.totalDonations],
+      ].map(([k,v]) => `
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px">
+          <span class="text-muted">${k}</span><span class="bold">${v}</span>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ─── ADMIN AUDIT LOG ─── */
+function adminAuditHTML() {
+  const logs = appState.auditLog;
+  const actionColors = {
+    LOGIN:'badge-blue', REGISTER:'badge-green', LOGOUT:'badge-gray',
+    VERIFY_USER:'badge-green', DEACTIVATE_USER:'badge-amber', ACTIVATE_USER:'badge-green', DELETE_USER:'badge-red',
+    CREATE_REQUEST:'badge-blue', UPDATE_REQUEST_STATUS:'badge-amber', DELETE_REQUEST:'badge-red',
+    RECORD_DONATION:'badge-green', UPDATE_PROFILE:'badge-gray', SYSTEM_INIT:'badge-purple',
+  };
+  return `<div class="card">
+    <div class="card-header">
+      <span class="card-title serif" style="font-size:22px">Audit Log</span>
+      <span class="badge badge-gray">${logs.length} entries</span>
+    </div>
+    ${logs.length === 0 ? '<div class="empty"><p>No audit entries yet.</p></div>' :
+    logs.map(l => `
+      <div class="audit-row">
+        <span class="audit-badge ${actionColors[l.action]||'badge-gray'}" style="min-width:160px">${l.action}</span>
+        <div style="flex:1">
+          <div class="text-sm">${l.details}</div>
+          <div class="text-xs text-muted">by ${l.performedBy} · ${timeAgo(l.createdAt)}</div>
+        </div>
+        <span class="text-xs text-muted" style="white-space:nowrap">${new Date(l.createdAt).toLocaleString()}</span>
+      </div>`).join('')}
+  </div>`;
+}
+
+/* ─── MODALS ─── */
+function openModal(type) { appState.modal = type; render(); }
+function closeModal() { appState.modal = null; appState.prefillBlood = null; render(); }
+
+function modalHTML() {
+  const m = appState.modal;
+  if (!m) return '';
+  let inner = '';
+
+  if (m === 'login') {
+    inner = `
+      <div class="modal-title">Welcome back 👋</div>
+      <div class="modal-sub">Sign in to your REDDROP account</div>
+      <div class="info-box" style="margin-bottom:1.25rem">
+        Demo accounts:<br/>
+        <strong style="color:var(--text)">arif@demo.com</strong> / <strong style="color:var(--text)">demo</strong> (donor) &nbsp;·&nbsp;
+        <strong style="color:var(--text)">sumaiya@demo.com</strong> / <strong style="color:var(--text)">demo</strong> (receiver) &nbsp;·&nbsp;
+        <strong style="color:var(--text)">admin@reddrop.com</strong> / <strong style="color:var(--text)">admin123</strong>
+      </div>
+      <div class="form-group"><label>Email Address</label><input id="l-email" type="email" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <div class="form-group"><label>Password</label><input id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <div id="login-error" class="form-error" style="display:none;margin-bottom:8px"></div>
+      <button class="btn btn-primary btn-full" style="margin-top:0.5rem" onclick="doLogin()" id="login-btn">Sign In</button>
+      <div style="text-align:center;margin-top:1rem;font-size:13px;color:var(--text3)">No account? <span style="color:var(--red);cursor:pointer" onclick="openModal('register')">Register here →</span></div>`;
+  }
+
+  else if (m === 'register') {
+    inner = `
+      <div class="modal-title">Join REDDROP 🩸</div>
+      <div class="modal-sub">Create your account and start saving lives</div>
+      <div class="form-row">
+        <div class="form-group"><label>Full Name *</label><input id="r-name" placeholder="Your full name"/></div>
+        <div class="form-group"><label>Role *</label>
+          <select id="r-role" onchange="document.getElementById('donor-fields').style.display=this.value==='donor'?'block':'none'">
+            <option value="donor">🩸 Donor</option>
+            <option value="receiver">💉 Receiver</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Email *</label><input id="r-email" type="email" placeholder="your@email.com"/></div>
+        <div class="form-group"><label>Phone</label><input id="r-phone" placeholder="017XXXXXXXX"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Password *</label><input id="r-pass" type="password" placeholder="Min 6 characters"/></div>
+        <div class="form-group"><label>City</label>
+          <select id="r-city">${CITIES.map(c=>`<option>${c}</option>`).join('')}</select>
+        </div>
+      </div>
+      <div id="donor-fields" class="form-group">
+        <label>Blood Group *</label>
+        <select id="r-blood">${BLOOD_TYPES.map(t=>`<option>${t}</option>`).join('')}</select>
+      </div>
+      <div id="reg-error" class="form-error" style="display:none;margin-bottom:8px"></div>
+      <button class="btn btn-primary btn-full" style="margin-top:0.5rem" onclick="doRegister()" id="reg-btn">Create Account</button>
+      <div style="text-align:center;margin-top:1rem;font-size:13px;color:var(--text3)">Have an account? <span style="color:var(--red);cursor:pointer" onclick="openModal('login')">Sign in →</span></div>`;
+  }
+
+  else if (m === 'new_request' || m === 'request_blood') {
+    const prefill = appState.prefillBlood || '';
+    inner = `
+      <div class="modal-title">🩸 Request Blood</div>
+      <div class="modal-sub">Compatible donors near you will be notified immediately</div>
+      ${!appState.user ? `<div class="warning-box" style="margin-bottom:1rem;border-radius:var(--radius-sm)"><span style="color:var(--amber-text)">⚠ Please <span style="cursor:pointer;text-decoration:underline" onclick="openModal('login')">sign in</span> as a receiver to submit a request.</span></div>` : ''}
+      ${appState.user && appState.user.role !== 'receiver' ? `<div class="warning-box" style="margin-bottom:1rem;border-radius:var(--radius-sm)"><span style="color:var(--amber-text)">⚠ Only receiver accounts can submit blood requests.</span></div>` : ''}
+      <div class="form-row">
+        <div class="form-group"><label>Blood Group Needed *</label>
+          <select id="req-blood">${BLOOD_TYPES.map(t=>`<option value="${t}" ${prefill===t?'selected':''}>${t}</option>`).join('')}</select>
+        </div>
+        <div class="form-group"><label>Urgency Level *</label>
+          <select id="req-urgency">
+            <option value="high">🔴 High – Emergency</option>
+            <option value="medium">🟡 Medium – Within 24h</option>
+            <option value="low">🟢 Low – Scheduled</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Hospital Name *</label><input id="req-hospital" placeholder="Hospital or blood bank name"/></div>
+        <div class="form-group"><label>City</label>
+          <select id="req-city">${CITIES.map(c=>`<option>${c}</option>`).join('')}</select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Units Needed</label>
+          <select id="req-units">${[1,2,3,4,5].map(n=>`<option value="${n}">${n} unit${n>1?'s':''}</option>`).join('')}</select>
+        </div>
+        <div class="form-group"><label>Patient Notes</label><input id="req-notes" placeholder="Brief description..."/></div>
+      </div>
+      <div id="req-error" class="form-error" style="display:none;margin-bottom:8px"></div>
+      <button class="btn btn-primary btn-full" onclick="doSubmitRequest()" ${!appState.user || appState.user.role !== 'receiver' ? 'disabled' : ''}>Submit Request & Notify Donors</button>`;
+  }
+
+  else if (m === 'confirm_accept') {
+    inner = `
+      <div class="modal-title">Accept Blood Request?</div>
+      <div class="modal-sub">This will record a donation and start your 90-day restriction.</div>
+      <div class="info-box" style="margin-bottom:1rem">Request ID: ${appState.pendingAcceptId}</div>
+      <div style="display:flex;gap:8px;margin-top:1rem">
+        <button class="btn btn-success btn-full" onclick="doAcceptRequest('${appState.pendingAcceptId}');closeModal()">Yes, Accept</button>
+        <button class="btn btn-ghost btn-full" onclick="closeModal()">Cancel</button>
+      </div>`;
+  }
+
+  return `<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">${inner}<button class="modal-close" onclick="closeModal()">✕</button></div>
+  </div>`;
+}
+
+/* ════════════════════════════════════════════════
+   ACTION HANDLERS — wiring UI to backend services
+   ════════════════════════════════════════════════ */
+
+async function doLogin() {
+  const email = document.getElementById('l-email')?.value?.trim();
+  const pass = document.getElementById('l-pass')?.value;
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+  if (btn) btn.disabled = true;
+  if (errEl) errEl.style.display = 'none';
+  const res = await AuthService.login(email, pass);
+  if (res.error) {
+    if (errEl) { errEl.textContent = res.error; errEl.style.display = 'block'; }
+    toast(res.error, 'error');
+    if (btn) btn.disabled = false;
+    return;
+  }
+  appState.user = res.user;
+  appState.modal = null;
+  appState.view = 'app';
+  appState.sidebarTab = 'dashboard';
+  await refreshUserData();
+  if (res.user.role === 'admin') await refreshAdminData();
+  toast(`Welcome back, ${res.user.name.split(' ')[0]}! 👋`, 'success');
+  render();
+}
+
+async function doRegister() {
+  const name = document.getElementById('r-name')?.value?.trim();
+  const email = document.getElementById('r-email')?.value?.trim();
+  const phone = document.getElementById('r-phone')?.value?.trim();
+  const pass = document.getElementById('r-pass')?.value;
+  const role = document.getElementById('r-role')?.value;
+  const city = document.getElementById('r-city')?.value;
+  const blood = document.getElementById('r-blood')?.value;
+  const errEl = document.getElementById('reg-error');
+  const btn = document.getElementById('reg-btn');
+  if (btn) btn.disabled = true;
+  if (errEl) errEl.style.display = 'none';
+  const res = await AuthService.register({ name, email, password: pass, role, phone, city, bloodGroup: role === 'donor' ? blood : null });
+  if (res.error) {
+    if (errEl) { errEl.textContent = res.error; errEl.style.display = 'block'; }
+    toast(res.error, 'error');
+    if (btn) btn.disabled = false;
+    return;
+  }
+  // Auto-login after register
+  const loginRes = await AuthService.login(email, pass);
+  appState.user = loginRes.user || res.user;
+  appState.modal = null;
+  appState.view = 'app';
+  appState.sidebarTab = 'dashboard';
+  await refreshUserData();
+  toast('Account created! Welcome to REDDROP 🎉', 'success');
+  render();
+}
+
+async function doLogout() {
+  const token = sessionStorage.getItem('rd_token');
+  await AuthService.logout(token);
+  if (appState.user) await AuditService.log('LOGOUT', appState.user.id, appState.user.id, 'User logged out');
+  appState.user = null;
+  appState.view = 'home';
+  appState.notifications = [];
+  appState.unreadCount = 0;
+  toast('Signed out successfully', 'info');
+  render();
+}
+
+async function doSaveProfile() {
+  const u = appState.user;
+  const name = document.getElementById('p-name')?.value?.trim();
+  const phone = document.getElementById('p-phone')?.value?.trim();
+  const updates = { name, phone };
+  if (u.role === 'donor') {
+    updates.bloodGroup = document.getElementById('p-blood')?.value;
+    updates.city = document.getElementById('p-city')?.value;
+    updates.availability = document.getElementById('p-avail')?.value === 'true';
+  }
+  const res = await UserService.updateProfile(u.id, updates, u);
+  if (res.error) { toast(res.error, 'error'); return; }
+  appState.user = res.user;
+  toast('Profile saved ✓', 'success');
+  render();
+}
+
+async function doToggleAvailability() {
+  const res = await UserService.toggleAvailability(appState.user.id, appState.user);
+  if (res.error) { toast(res.error, 'error'); return; }
+  appState.user = res.user;
+  toast(`Availability set to: ${res.availability ? 'Available ✅' : 'Unavailable ⏸'}`, 'info');
+  render();
+}
+
+async function doLogDonation() {
+  const hospital = document.getElementById('d-hospital')?.value?.trim();
+  const city = document.getElementById('d-city')?.value;
+  const date = document.getElementById('d-date')?.value;
+  const receiver = document.getElementById('d-receiver')?.value?.trim();
+  const res = await DonationService.logManual({ donorId: appState.user.id, hospital, city, date, receiverName: receiver }, appState.user);
+  if (res.error) { toast(res.error, 'error'); return; }
+  // Refresh user
+  const fresh = await dbGet('users', appState.user.id);
+  if (fresh) appState.user = AuthService.sanitize(fresh);
+  await refreshUserData();
+  toast('Donation logged! Thank you 🙏', 'success');
+  appState.sidebarTab = 'my-donations';
+  render();
+}
+
+async function doSubmitRequest() {
+  const blood = document.getElementById('req-blood')?.value;
+  const urgency = document.getElementById('req-urgency')?.value;
+  const hospital = document.getElementById('req-hospital')?.value?.trim();
+  const city = document.getElementById('req-city')?.value;
+  const notes = document.getElementById('req-notes')?.value?.trim();
+  const units = document.getElementById('req-units')?.value;
+  const errEl = document.getElementById('req-error');
+  if (errEl) errEl.style.display = 'none';
+  const res = await RequestService.create({ bloodGroup: blood, urgency, hospital, city, notes, unitsNeeded: parseInt(units) }, appState.user);
+  if (res.error) {
+    if (errEl) { errEl.textContent = res.error; errEl.style.display = 'block'; }
+    toast(res.error, 'error'); return;
+  }
+  appState.modal = null;
+  appState.view = 'app';
+  appState.sidebarTab = 'my-requests';
+  await refreshUserData();
+  toast(`Request submitted! ${res.matchedDonors} donor(s) notified 🔔`, 'success');
+  render();
+}
+
+async function doCancelRequest(id) {
+  if (!confirm('Cancel this blood request?')) return;
+  const res = await RequestService.updateStatus(id, 'cancelled', appState.user);
+  if (res.error) { toast(res.error, 'error'); return; }
+  await refreshUserData();
+  toast('Request cancelled', 'info');
+  render();
+}
+
+async function doCompleteRequest(id) {
+  if (!confirm('Mark this request as completed?')) return;
+  const res = await RequestService.updateStatus(id, 'completed', appState.user);
+  if (res.error) { toast(res.error, 'error'); return; }
+  await refreshUserData();
+  toast('Request marked as completed ✓', 'success');
+  render();
+}
+
+async function doVerifyUser(id) {
+  const res = await UserService.verifyUser(id, appState.user);
+  if (res.error) { toast(res.error, 'error'); return; }
+  toast('User verified ✓', 'success');
+  await refreshAdminData();
+  render();
+}
+
+async function doDeactivateUser(id) {
+  if (!confirm('Deactivate this user? They will not be able to log in.')) return;
+  const res = await UserService.deactivateUser(id, appState.user);
+  if (res.error) { toast(res.error, 'error'); return; }
+  toast('User deactivated', 'warn');
+  await refreshAdminData();
+  render();
+}
+
+async function doActivateUser(id) {
+  const res = await UserService.activateUser(id, appState.user);
+  if (res.error) { toast(res.error, 'error'); return; }
+  toast('User activated ✓', 'success');
+  await refreshAdminData();
+  render();
+}
+
+async function doDeleteUser(id) {
+  if (!confirm('Permanently delete this user? This cannot be undone.')) return;
+  const res = await UserService.deleteUser(id, appState.user);
+  if (res.error) { toast(res.error, 'error'); return; }
+  toast('User deleted', 'warn');
+  await refreshAdminData();
+  render();
+}
+
+async function doAdminDeleteRequest(id) {
+  if (!confirm('Delete this blood request? This cannot be undone.')) return;
+  const res = await RequestService.deleteRequest(id, appState.user);
+  if (res.error) { toast(res.error, 'error'); return; }
+  toast('Request deleted', 'warn');
+  await refreshAdminData();
+  render();
+}
+
+async function markNotifRead(id) {
+  if (!appState.user) return;
+  await NotificationService.markRead(id, appState.user.id);
+  appState.notifications = await NotificationService.getForUser(appState.user.id);
+  appState.unreadCount = appState.notifications.filter(n => !n.read).length;
+  render();
+}
+
+async function doMarkAllRead() {
+  if (!appState.user) return;
+  await NotificationService.markAllRead(appState.user.id);
+  appState.notifications = await NotificationService.getForUser(appState.user.id);
+  appState.unreadCount = 0;
+  toast('All notifications marked as read', 'info');
+  render();
+}
+
+/* ─── Donor accept request (from search or notifications) ─── */
+async function doDonorAccept(requestId) {
+  appState.pendingAcceptId = requestId;
+  openModal('confirm_accept');
+}
+
+/* ════════════════════════════════════════════════
+   MAIN RENDER
+   ════════════════════════════════════════════════ */
+
+function render() {
+  const v = appState.view;
+  let html = '';
+  if (v === 'home') html = homeHTML();
+  else if (v === 'search') html = searchHTML();
+  else if (v === 'app') html = appHTML();
+  else html = homeHTML();
+  html += modalHTML();
+  document.getElementById('app').innerHTML = html;
+  // Update live hero stats from DB (async)
+  if (v === 'home') updateHeroStats();
+}
+
+async function updateHeroStats() {
+  const [donors, requests] = await Promise.all([dbGetAll('users'), dbGetAll('requests')]);
+  const donorCount = donors.filter(u => u.role === 'donor').length;
+  const fulfilled = requests.filter(r => r.status === 'completed').length;
+  const el1 = document.getElementById('hs-donors');
+  const el2 = document.getElementById('hs-fulfilled');
+  if (el1) el1.textContent = donorCount + '+';
+  if (el2) el2.textContent = fulfilled + '+';
+}
+
+/* ════════════════════════════════════════════════
+   BOOT SEQUENCE
+   ════════════════════════════════════════════════ */
+
+async function boot() {
+  try {
+    await initDB();
+    setDbStatus('Seeding demo data...');
+    await seedDatabase();
+    setDbStatus('Running maintenance jobs...');
+    // Run expiry job on load (mirrors P09 auto-expiry cron)
+    await RequestService.runExpiryJob();
+    // Check for existing session
+    setDbStatus('Checking session...');
+    const currentUser = await AuthService.getCurrentUser();
+    if (currentUser) {
+      appState.user = currentUser;
+      appState.view = 'app';
+      await refreshUserData();
+      if (currentUser.role === 'admin') await refreshAdminData();
+    }
+    setDbStatus('Ready!');
+    // Hide loader, show app
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    render();
+    // Set up notification polling (every 30s, mirrors P12 NotificationBell)
+    setInterval(async () => {
+      if (appState.user) {
+        const count = await NotificationService.getUnreadCount(appState.user.id);
+        if (count !== appState.unreadCount) {
+          appState.unreadCount = count;
+          appState.notifications = await NotificationService.getForUser(appState.user.id);
+          render();
+        }
+      }
+    }, 30000);
+    // Run expiry job every hour
+    setInterval(() => RequestService.runExpiryJob(), 60 * 60 * 1000);
+  } catch (err) {
+    console.error('Boot error:', err);
+    setDbStatus('Error: ' + err.message);
+    document.getElementById('loader').innerHTML = `
+      <div style="text-align:center;color:#e57373;padding:2rem">
+        <div style="font-size:2rem;margin-bottom:1rem">⚠️</div>
+        <div style="font-size:16px;font-weight:600">Database Error</div>
+        <div style="font-size:13px;color:#A09D99;margin-top:0.5rem">${err.message}</div>
+        <div style="font-size:12px;color:#6B6865;margin-top:0.5rem">Please ensure your browser supports IndexedDB and is not in private/incognito mode.</div>
+        <button onclick="location.reload()" style="margin-top:1.5rem;padding:8px 20px;background:#C0392B;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px">Retry</button>
+      </div>`;
+  }
+}
+
+boot();
+</script>
+</body>
+</html>
